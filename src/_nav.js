@@ -305,6 +305,13 @@ const _nav = [
     href: 'https://coreui.io/react/docs/templates/installation/',
     icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'Test Page',
+    to: '/base/test-page', // Asegúrate de que esta ruta coincida con la que configuraste en tus rutas
+    icon: <CIcon icon={cilStar} customClassName="nav-icon" />, // Puedes usar cualquier icono que desees
+  },
+  
 ]
 
 export default _nav
