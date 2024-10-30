@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux'
 
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))

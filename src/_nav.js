@@ -7,11 +7,13 @@ import {
   cilCursor,
   cilDescription,
   cilDrop,
+  cilGroup,
   cilNotes,
   cilPencil,
   cilPuzzle,
   cilSpeedometer,
   cilStar,
+  cilUser,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -25,6 +27,13 @@ const _nav = [
       color: 'info',
       text: 'NEW',
     },
+  },
+  {
+    component: CNavItem,
+    name: 'Clients', // Nombre que aparecerá en el menú
+    to: '/clients', // Ruta hacia la pantalla de clientes
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+   
   },
   {
     component: CNavTitle,
