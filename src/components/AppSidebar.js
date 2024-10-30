@@ -15,7 +15,7 @@ import { AppSidebarNav } from './AppSidebarNav';
 import navigation from '../_nav';
 
 // Importar la imagen
-import logo from '../assets/images/avatars/logo.webp'; // Ajusta la ruta según tu estructura de carpetas
+import logo from '../assets/images/avatars/logo.png'; // Ajusta la ruta según tu estructura de carpetas
 
 const AppSidebar = () => {
   const dispatch = useDispatch();
@@ -36,7 +36,7 @@ const AppSidebar = () => {
     >
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand to="/">
-          {/* Reemplazar el logo de texto con una imagen */}
+          
           <img src={logo} alt="Cadena Hotelera" style={{ width: '100%', height: 'auto' }} />
         </CSidebarBrand>
         <CCloseButton
