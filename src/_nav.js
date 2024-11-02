@@ -3,6 +3,7 @@ import CIcon from '@coreui/icons-react'
 import {
   cilBell,
   cilCalculator,
+  cilCalendar,
   cilChartPie,
   cilCursor,
   cilDescription,
@@ -33,6 +34,13 @@ const _nav = [
     name: 'Clients', // Nombre que aparecerá en el menú
     to: '/clients', // Ruta hacia la pantalla de clientes
     icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+   
+  },
+  {
+    component: CNavItem,
+    name: 'Calendar Rooms', // Nombre que aparecerá en el menú
+    to: '/calendar', // Ruta hacia la pantalla de clientes
+    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
    
   },
   {
