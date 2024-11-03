@@ -1,0 +1,355 @@
+{
+  "clients": [
+    {
+      "id": "30056463",
+      "firstName": "ashlyy",
+      "middleName": "hanneiker",
+      "lastName": "torres",
+      "email": "as@gmail.com",
+      "dateOfBirth": "2003-07-16",
+      "phoneNumber": "04126759712",
+      "numberPersons": "2",
+      "nationality": "venezolana"
+    },
+    {
+      "id": "28061677",
+      "firstName": "Juan",
+      "middleName": "Pablo",
+      "lastName": "Parra",
+      "email": "juan@gmail.com",
+      "dateOfBirth": "2001-09-29",
+      "phoneNumber": "04147109021",
+      "numberPersons": "2",
+      "nationality": "venezolana"
+    }
+  ],
+  "reservations": [
+    {
+      "id": "148c",
+      "dateReserve": "2024-11-03",
+      "dateCheckin": "2024-11-03",
+      "dateCheckout": "2024-11-04",
+      "numberNights": "2",
+      "roomAssigned": "2",
+      "clientId": "30056463"
+    }
+  ],
+  "payments": [
+    {
+      "id": "PAY1000",
+      "dateInvoice": "2024-11-10",
+      "amount": 300,
+      "id_reservation": "37d2",
+      "idClient": "30056463",
+      "notes": "First payment",
+      "time": "14:00",
+      "paymentMethod": "Credit Card"
+    },
+    {
+      "id": "PAY1001",
+      "dateInvoice": "2024-11-11",
+      "amount": 200,
+      "id_reservation": "37d2",
+      "idClient": "30056463",
+      "notes": "Second payment",
+      "time": "15:00",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY4811",
+      "dateInvoice": "2024-11-03",
+      "total_amount": 22,
+      "id_reservation": "37d2",
+      "idClient": "30056463",
+      "notes": "notas",
+      "time": "00:10",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY5580",
+      "dateInvoice": "2024-11-03",
+      "total_amount": 22,
+      "id_reservation": "37d2",
+      "notes": "",
+      "time": "00:20",
+      "paymentMethod": "Credit"
+    },
+    {
+      "id": "PAY4368",
+      "dateInvoice": "2024-11-04",
+      "total_amount": 200,
+      "id_reservation": "37d2",
+      "idClient": "30056463",
+      "notes": "hola",
+      "time": "00:22",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY3912",
+      "dateInvoice": "2024-11-03",
+      "total_amount": 2000,
+      "id_reservation": "8b16",
+      "idClient": "30056463",
+      "notes": "pago de restaurant",
+      "time": "00:25",
+      "paymentMethod": "Credit Card"
+    },
+    {
+      "id": "PAY2512",
+      "dateInvoice": "2024-11-03",
+      "total_amount": 23,
+      "id_reservation": "37d2",
+      "idClient": "30056463",
+      "notes": "aaa",
+      "time": "00:35",
+      "paymentMethod": "Cash"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "1",
+      "reservationId": null,
+      "totalAmount": 500,
+      "date": "2024-11-10",
+      "clientId": "30056463",
+      "paymentIds": [
+        "PAY4811",
+        "PAY1001"
+      ]
+    }
+  ],
+  "admins": [
+    {
+      "id": "1",
+      "username": "admin1",
+      "firstName": "Carloss",
+      "lastName": "Rodriguezz",
+      "email": "carlos.admin@example.com",
+      "password": "hashed_password_1",
+      "phoneNumber": "04129998877",
+      "role": "superadmin",
+      "permissions": [
+        "manage_clients",
+        "manage_reservations",
+        "manage_payments"
+      ]
+    },
+    {
+      "id": "2",
+      "username": "admin2",
+      "firstName": "Juan",
+      "lastName": "Pablo",
+      "email": "parracastilloj6@gmail.com",
+      "password": "12312",
+      "phoneNumber": "121212",
+      "role": "admin"
+    }
+  ],
+  "room_equipment": [
+    {
+      "id": "EQUIP001",
+      "name": "WiFi",
+      "description": "High-speed wireless internet access",
+      "available": true
+    },
+    {
+      "id": "EQUIP002",
+      "name": "TV",
+      "description": "Flat screen television with cable channels",
+      "available": true
+    },
+    {
+      "id": "EQUIP003",
+      "name": "Jacuzzi",
+      "description": "Private jacuzzi in the room",
+      "available": true
+    },
+    {
+      "id": "EQUIP004",
+      "name": "Air Conditioning",
+      "description": "Climate control system for optimal comfort",
+      "available": true
+    },
+    {
+      "id": "EQUIP005",
+      "name": "Mini Bar",
+      "description": "Stocked mini bar with snacks and beverages",
+      "available": true
+    },
+    {
+      "id": "EQUIP006",
+      "name": "Safe",
+      "description": "In-room safe for valuables",
+      "available": true
+    },
+    {
+      "id": "EQUIP007",
+      "name": "Hair Dryer",
+      "description": "Hair dryer available for guests",
+      "available": true
+    },
+    {
+      "id": "EQUIP008",
+      "name": "Coffee Maker",
+      "description": "Coffee maker with complimentary coffee",
+      "available": true
+    },
+    {
+      "id": "EQUIP009",
+      "name": "Iron",
+      "description": "Iron and ironing board provided",
+      "available": true
+    },
+    {
+      "id": "EQUIP010",
+      "name": "Desk",
+      "description": "Work desk with lamp and power outlets",
+      "available": true
+    },
+    {
+      "id": "EQUIP011",
+      "name": "Balcony",
+      "description": "Private balcony with seating area",
+      "available": true
+    },
+    {
+      "id": "EQUIP012",
+      "name": "Bathroom Amenities",
+      "description": "Complimentary toiletries and towels",
+      "available": true
+    },
+    {
+      "id": "EQUIP013",
+      "name": "Sound System",
+      "description": "In-room sound system for music",
+      "available": true
+    },
+    {
+      "id": "EQUIP014",
+      "name": "Refrigerator",
+      "description": "In-room refrigerator for storing perishables",
+      "available": true
+    },
+    {
+      "id": "EQUIP015",
+      "name": "Luggage Rack",
+      "description": "Designated area for luggage storage",
+      "available": true
+    },
+    {
+      "id": "EQUIP016",
+      "name": "Electric Kettle",
+      "description": "Electric kettle for tea and hot beverages",
+      "available": true
+    },
+    {
+      "id": "EQUIP017",
+      "name": "Smart TV",
+      "description": "Smart TV with streaming capabilities",
+      "available": true
+    },
+    {
+      "id": "EQUIP018",
+      "name": "Direct Dial Telephone",
+      "description": "Telephone for direct calls from the room",
+      "available": true
+    },
+    {
+      "id": "EQUIP019",
+      "name": "Massage Chair",
+      "description": "Relaxing massage chair for guests",
+      "available": false
+    },
+    {
+      "id": "EQUIP020",
+      "name": "Fireplace",
+      "description": "In-room fireplace for a cozy atmosphere",
+      "available": true
+    },
+    {
+      "id": "EQUIP021",
+      "name": "Fitness Equipment",
+      "description": "Dumbbells and yoga mats available for workouts",
+      "available": false
+    },
+    {
+      "id": "EQUIP022",
+      "name": "Dressing Room",
+      "description": "Private dressing room with full-length mirror",
+      "available": true
+    },
+    {
+      "id": "EQUIP023",
+      "name": "Pet-Friendly Features",
+      "description": "Bedding and bowls for pets",
+      "available": false
+    },
+    {
+      "id": "EQUIP024",
+      "name": "Game Console",
+      "description": "Video game console available for guest use",
+      "available": true
+    }
+  ],
+  "room_types": [
+    {
+      "id": "TYPE001",
+      "type": "Single",
+      "capacity": 1,
+      "price": 100,
+      "type_bed": "Single",
+      "size": "20m²",
+      "hotel_floor": 1
+    },
+    {
+      "id": "TYPE002",
+      "type": "Duo",
+      "capacity": 2,
+      "price": 150,
+      "type_bed": "Double",
+      "size": "25m²",
+      "hotel_floor": 1
+    },
+    {
+      "id": "TYPE003",
+      "type": "Imperial",
+      "capacity": 4,
+      "price": 300,
+      "type_bed": "King",
+      "size": "35m²",
+      "hotel_floor": 2
+    }
+  ],
+  "rooms": [
+    {
+      "id": "ROOM001",
+      "status": "available",
+      "equipment": [
+        "EQUIP001",
+        "EQUIP002",
+        "EQUIP004"
+      ],
+      "typeId": "TYPE001"
+    },
+    {
+      "id": "ROOM002",
+      "status": "occupied",
+      "equipment": [
+        "EQUIP003",
+        "EQUIP005",
+        "EQUIP006"
+      ],
+      "typeId": "TYPE002"
+    },
+    {
+      "id": "ROOM003",
+      "status": "available",
+      "equipment": [
+        "EQUIP007",
+        "EQUIP008",
+        "EQUIP009"
+      ],
+      "typeId": "TYPE003"
+    }
+  ]
+}

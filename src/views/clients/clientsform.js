@@ -25,31 +25,36 @@ const ClientsForm = ({ show, handleClose, handleSave, client }) => {
       setNationality(client.nationality);
     } else {
       // Reset fields if no client is selected
-      setId('');
-      setFirstName('');
-      setMiddleName('');
-      setLastName('');
-      setEmail('');
-      setDateOfBirth('');
-      setPhoneNumber('');
-      setNumberPersons('');
-      setNationality('');
+      resetForm();
     }
   }, [client]);
+
+  const resetForm = () => {
+    setId('');
+    setFirstName('');
+    setMiddleName('');
+    setLastName('');
+    setEmail('');
+    setDateOfBirth('');
+    setPhoneNumber('');
+    setNumberPersons('');
+    setNationality('');
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     handleSave({
-      id, 
-      firstName, 
-      middleName, 
-      lastName, 
-      email, 
-      dateOfBirth, 
-      phoneNumber, 
-      numberPersons, 
+      id,
+      firstName,
+      middleName,
+      lastName,
+      email,
+      dateOfBirth,
+      phoneNumber,
+      numberPersons,
       nationality
     });
+    resetForm(); // Reset form fields after submission
     handleClose();
   };
 
@@ -68,6 +73,7 @@ const ClientsForm = ({ show, handleClose, handleSave, client }) => {
               value={id}
               onChange={(e) => setId(e.target.value)}
               required
+              readOnly={!!client} // Make ID read-only if editing
             />
           </Form.Group>
           <Form.Group controlId="formFirstName">

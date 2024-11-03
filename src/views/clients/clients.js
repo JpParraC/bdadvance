@@ -1,75 +1,199 @@
-import React, { useState } from 'react';
-import { Table, Button, Modal, Form } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Modal } from 'react-bootstrap';
 import ClientsForm from './clientsform';
 import ReservationForm from './reservationform';
 import { CIcon } from '@coreui/icons-react';
-import { cilPen, cilTrash, cilMoney, cilFile } from '@coreui/icons';
+import { cilPen, cilTrash, cilMoney, cilFile, cilCalendar } from '@coreui/icons';
+import axios from 'axios';
 
 const Clients = () => {
+  const [clients, setClients] = useState([]);
+  const [reservations, setReservations] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showReservationForm, setShowReservationForm] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showInvoice, setShowInvoice] = useState(false);
+  const [showCheckInModal, setShowCheckInModal] = useState(false);
   const [editClient, setEditClient] = useState(null);
   const [editReservation, setEditReservation] = useState(null);
   const [selectedReservation, setSelectedReservation] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [clientCheckedIn, setClientCheckedIn] = useState(false);
+  const [clientIdFilter, setClientIdFilter] = useState(''); // Estado para el filtro
+  const [reservationDateFilter, setReservationDateFilter] = useState(''); // Filtro de fecha de reservación
 
-  // Datos de clientes de ejemplo
-  const clients = [
-    { id: 1, idclient: '30056463', firstName: 'Juan', middleName: 'Carlos', lastName: 'Pérez', email: 'juan@example.com', dateOfBirth: '1990-01-01', phoneNumber: '123-456-7890', numberPersons: 3, nationality: 'Mexican' },
-    { id: 2, idclient: '30056464', firstName: 'María', middleName: 'Luisa', lastName: 'García', email: 'maria@example.com', dateOfBirth: '1985-05-15', phoneNumber: '098-765-4321', numberPersons: 2, nationality: 'Spanish' },
-    { id: 3, idclient: '30056465', firstName: 'Carlos', middleName: 'Alberto', lastName: 'López', email: 'carlos@example.com', dateOfBirth: '1992-12-12', phoneNumber: '555-123-4567', numberPersons: 4, nationality: 'Colombian' },
-  ];
 
-  // Datos de reservas de ejemplo
-  const [reservations, setReservations] = useState([
-    { id: 1, clientId: '30056463', clientName: 'Juan Carlos Pérez', reservationDate: '2024-10-29', checkIn: '2024-11-10', checkOut: '2024-11-15', numberOfNights: 5, room: '101', payments: [{ date: '2024-10-30', amount: 200, notes: 'Initial deposit', time: '12:00', paymentMethod: 'Credit Card', invoiceId: 'INV001' }] },
-    { id: 2, clientId: '30056464', clientName: 'María Luisa García', reservationDate: '2024-10-28', checkIn: '2024-11-12', checkOut: '2024-11-18', numberOfNights: 6, room: '102', payments: [] },
-    { id: 3, clientId: '30056465', clientName: 'Carlos Alberto López', reservationDate: '2024-10-27', checkIn: '2024-11-15', checkOut: '2024-11-20', numberOfNights: 5, room: '103', payments: [] },
-  ]);
+  const fetchClients = () => {
+    axios.get('http://localhost:3001/clients')
+      .then(response => setClients(response.data))
+      .catch(error => console.error("Error loading clients:", error));
+  };
+
+  const fetchReservations = () => {
+    axios.get('http://localhost:3001/reservations')
+      .then(response => setReservations(response.data))
+      .catch(error => console.error("Error loading reservations:", error));
+  };
+
+  const filteredClients = clients.filter(client => 
+    client.id.toString().includes(clientIdFilter)
+  );
+  
+
+  useEffect(() => {
+    fetchClients();
+    fetchReservations();
+  }, []);
 
   const handleOpenForm = () => { setEditClient(null); setShowForm(true); };
   const handleCloseForm = () => { setShowForm(false); };
-  const handleOpenReservationForm = () => { setEditReservation(null); setShowReservationForm(true); };
+
+  const handleOpenReservationForm = (client) => {
+    setSelectedClient(client);
+    const isClientRegistered = clients.some(existingClient => existingClient.id === client.id);
+    
+    if (!isClientRegistered) {
+      alert('Client is not registered. Please register the client first.');
+    } else {
+      setShowCheckInModal(true);
+    }
+  };
+
   const handleCloseReservationForm = () => { setShowReservationForm(false); };
-  const handleDeleteReservation = (id) => { setReservations(reservations.filter(reservation => reservation.id !== id)); };
+
+  const handleCheckInConfirmation = (checkedIn) => {
+    setShowCheckInModal(false);
+    if (checkedIn) {
+      setClientCheckedIn(true);
+      setShowReservationForm(true);
+    } else {
+      alert('Client must be checked in to make a reservation.');
+    }
+  };
+
+  const addClient = (newClient) => {
+    axios.post('http://localhost:3001/clients', newClient)
+      .then(response => {
+        setClients([...clients, response.data]);
+        setShowForm(false);
+      })
+      .catch(error => console.error("Error adding client:", error));
+  };
+
+  const updateClient = (updatedClient) => {
+    axios.put(`http://localhost:3001/clients/${updatedClient.id}`, updatedClient)
+      .then(response => {
+        const updatedClients = clients.map(client => 
+          client.id === updatedClient.id ? response.data : client
+        );
+        setClients(updatedClients);
+        setShowForm(false);
+      })
+      .catch(error => console.error("Error updating client:", error));
+  };
+
+  const deleteClient = (id) => {
+    axios.delete(`http://localhost:3001/clients/${id}`)
+      .then(() => {
+        setClients(clients.filter(client => client.id !== id));
+      })
+      .catch(error => console.error("Error deleting client:", error));
+  };
+
+  const addReservation = (newReservation) => {
+    if (clientCheckedIn && selectedClient) {
+      newReservation.clientId = selectedClient.id;
+      axios.post('http://localhost:3001/reservations', newReservation)
+        .then(response => {
+          setReservations([...reservations, response.data]);
+          setShowReservationForm(false);
+          setClientCheckedIn(false);
+        })
+        .catch(error => console.error("Error adding reservation:", error));
+    } else {
+      alert('Client must be checked in before adding a reservation.');
+    }
+  };
+
+  const updateReservation = (updatedReservation) => {
+    axios.put(`http://localhost:3001/reservations/${updatedReservation.id}`, updatedReservation)
+      .then(response => {
+        const updatedReservations = reservations.map(reservation => 
+          reservation.id === updatedReservation.id ? response.data : reservation
+        );
+        setReservations(updatedReservations);
+        setShowReservationForm(false);
+      })
+      .catch(error => console.error("Error updating reservation:", error));
+  };
+
+  const deleteReservation = (id) => {
+    axios.delete(`http://localhost:3001/reservations/${id}`)
+      .then(() => {
+        setReservations(reservations.filter(reservation => reservation.id !== id));
+      })
+      .catch(error => console.error("Error deleting reservation:", error));
+  };
+
+  const handleRegisterPayment = (reservation) => {
+    setSelectedReservation(reservation);
+    setShowPaymentForm(true);
+  };
+
+  const handleGenerateInvoice = (reservation) => {
+    setSelectedReservation(reservation);
+    setShowInvoice(true);
+  };
+
   
-  const handleRegisterPayment = (reservation) => { setSelectedReservation(reservation); setShowPaymentForm(true); };
-  const handleGenerateInvoice = (reservation) => { setSelectedReservation(reservation); setShowInvoice(true); };
 
   const handleSavePayment = (e) => {
     e.preventDefault();
     const form = e.target;
     const newPayment = {
-      date: form.date.value,
-      amount: parseFloat(form.amount.value),
+      id: `PAY${Math.floor(Math.random() * 10000)}`, // Genera un ID único para el pago
+      dateInvoice: form.date.value,
+      total_amount: parseFloat(form.amount.value),
+      id_reservation: selectedReservation.id,
+      idClient: selectedReservation.clientId,
       notes: form.notes.value,
       time: form.time.value,
       paymentMethod: form.paymentMethod.value,
-      invoiceId: `INV${Math.floor(Math.random() * 10000)}`, // Generar ID de factura
     };
 
-    const updatedReservations = reservations.map(reservation =>
-      reservation.id === selectedReservation.id
-        ? { ...reservation, payments: [...reservation.payments, newPayment] }
-        : reservation
-    );
-    setReservations(updatedReservations);
-    setShowPaymentForm(false);
+    axios.post('http://localhost:3001/payments', newPayment) // Asegúrate de tener la ruta correcta para los pagos
+      .then(response => {
+        setShowPaymentForm(false);
+        alert('Payment registered successfully!');
+      })
+      .catch(error => console.error("Error saving payment:", error));
   };
+
+  const filteredReservations = reservations.filter(reservation => {
+    const reservationDate = new Date(reservation.dateReserve);
+    const selectedDate = new Date(reservationDateFilter);
+  
+    // Compara la fecha de la reservación con la fecha seleccionada
+    return reservationDateFilter ? reservationDate.toDateString() === selectedDate.toDateString() : true;
+  });
+  
 
   return (
     <div>
       <h2>Client Management</h2>
-      <Button variant="dark" onClick={handleOpenReservationForm}>Add reservation</Button>
-      
-      {/* Tabla de Clientes */}
+      <Button variant="dark" onClick={handleOpenForm}>Add Client</Button>
+      <input 
+          type="text" 
+          placeholder="Filter by Client ID" 
+          value={clientIdFilter} 
+          onChange={(e) => setClientIdFilter(e.target.value)} 
+          style={{ marginLeft: '10px', padding: '5px' }} 
+        />
       <div className="table-responsive mt-3">
         <Table striped bordered hover>
           <thead>
             <tr className='text-center'>
               <th>ID</th>
-              <th>ID client</th>
               <th>First Name</th>
               <th>Middle Name</th>
               <th>Last Name</th>
@@ -82,10 +206,9 @@ const Clients = () => {
             </tr>
           </thead>
           <tbody>
-            {clients.map((client) => (
+            {filteredClients.map((client) => (
               <tr className='text-center' key={client.id}>
                 <td>{client.id}</td>
-                <td>{client.idclient}</td>
                 <td>{client.firstName}</td>
                 <td>{client.middleName}</td>
                 <td>{client.lastName}</td>
@@ -99,8 +222,11 @@ const Clients = () => {
                     <Button variant="link" onClick={() => { setEditClient(client); setShowForm(true); }} title="Edit">
                       <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
                     </Button>
-                    <Button variant="link" onClick={() => alert(`Delete ${client.firstName} ${client.lastName}`)} title="Delete">
+                    <Button variant="link" onClick={() => deleteClient(client.id)} title="Delete">
                       <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
+                    </Button>
+                    <Button variant="link" onClick={() => handleOpenReservationForm(client)} title="Check-In and Add Reservation">
+                      <CIcon icon={cilCalendar} style={{ fontSize: '1.5rem', color: 'blue' }} />
                     </Button>
                   </div>
                 </td>
@@ -109,21 +235,29 @@ const Clients = () => {
           </tbody>
         </Table>
       </div>
+      <ClientsForm show={showForm} handleClose={handleCloseForm} client={editClient} handleSave={editClient ? updateClient : addClient} />
 
-      {/* Formulario de Cliente */}
-      <ClientsForm show={showForm} handleClose={handleCloseForm} client={editClient} />
-
-      {/* Formulario de Reserva */}
-      <ReservationForm show={showReservationForm} handleClose={handleCloseReservationForm} reservation={editReservation} />
-
-      {/* Tabla de Reservas */}
+      {/* Reservations Section */}
       <h2 className="mt-5">Reservations</h2>
+      <div className="mb-3 row">
+  
+  <div className="col-md-2">
+    <input
+      type="date"
+      id="reservationDateFilter"
+      value={reservationDateFilter}
+      onChange={(e) => setReservationDateFilter(e.target.value)}
+      className="form-control"
+    />
+  </div>
+</div>
+
+
       <div className="table-responsive mt-3">
         <Table striped bordered hover>
           <thead>
             <tr className='text-center'>
               <th>Client ID</th>
-              <th>Client Name</th>
               <th>Reservation Date</th>
               <th>Check-In Date</th>
               <th>Check-Out Date</th>
@@ -133,28 +267,27 @@ const Clients = () => {
             </tr>
           </thead>
           <tbody>
-            {reservations.map((reservation) => (
+            {filteredReservations.map((reservation) => (
               <tr className='text-center' key={reservation.id}>
                 <td>{reservation.clientId}</td>
-                <td>{reservation.clientName}</td>
-                <td>{reservation.reservationDate}</td>
-                <td>{reservation.checkIn}</td>
-                <td>{reservation.checkOut}</td>
-                <td>{reservation.numberOfNights}</td>
-                <td>{reservation.room}</td>
+                <td>{reservation.dateReserve}</td>
+                <td>{reservation.dateCheckin}</td>
+                <td>{reservation.dateCheckout}</td>
+                <td>{reservation.numberNights}</td>
+                <td>{reservation.roomAssigned}</td>
                 <td>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <Button variant="link" onClick={() => { setEditReservation(reservation); setShowReservationForm(true); }} title="Edit">
                       <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
                     </Button>
-                    <Button variant="link" onClick={() => handleDeleteReservation(reservation.id)} title="Delete">
+                    <Button variant="link" onClick={() => deleteReservation(reservation.id)} title="Delete">
                       <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
                     </Button>
                     <Button variant="link" onClick={() => handleRegisterPayment(reservation)} title="Register Payment">
                       <CIcon icon={cilMoney} style={{ fontSize: '1.5rem', color: 'green' }} />
                     </Button>
                     <Button variant="link" onClick={() => handleGenerateInvoice(reservation)} title="Generate Invoice">
-                      <CIcon icon={cilFile} style={{ fontSize: '1.5rem', color: 'blue' }} />
+                      <CIcon icon={cilFile} style={{ fontSize: '1.5rem', color: 'purple' }} />
                     </Button>
                   </div>
                 </td>
@@ -163,58 +296,65 @@ const Clients = () => {
           </tbody>
         </Table>
       </div>
-
-      {/* Modal para Registrar Pago */}
+      
+      <ReservationForm show={showReservationForm} handleClose={handleCloseReservationForm} addReservation={addReservation} updateReservation={updateReservation} reservation={editReservation} />
+      
+      {/* Payment Form Modal */}
       <Modal show={showPaymentForm} onHide={() => setShowPaymentForm(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Register Payment for {selectedReservation?.clientName}</Modal.Title>
+          <Modal.Title>Register Payment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSavePayment}>
-            <Form.Group controlId="date">
-              <Form.Label>Date</Form.Label>
-              <Form.Control type="date" defaultValue={new Date().toISOString().split('T')[0]} required />
-            </Form.Group>
-            <Form.Group controlId="time">
-              <Form.Label>Time</Form.Label>
-              <Form.Control type="time" required />
-            </Form.Group>
-            <Form.Group controlId="amount">
-              <Form.Label>Amount</Form.Label>
-              <Form.Control type="number" step="0.01" required />
-            </Form.Group>
-            <Form.Group controlId="notes">
-              <Form.Label>Notes</Form.Label>
-              <Form.Control as="textarea" rows={3} />
-            </Form.Group>
-            <Form.Group controlId="paymentMethod">
-              <Form.Label>Payment Method</Form.Label>
-              <Form.Control as="select">
-                <option>Credit Card</option>
-                <option>Debit Card</option>
-                <option>Cash</option>
-                <option>Bank Transfer</option>
-              </Form.Control>
-            </Form.Group>
-            <Button variant="primary" type="submit" className="mt-3">Save Payment</Button>
-          </Form>
+          <form onSubmit={handleSavePayment}>
+            <div className="mb-3">
+              <label htmlFor="date" className="form-label">Date</label>
+              <input type="date" className="form-control" id="date" required />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="amount" className="form-label">Amount</label>
+              <input type="number" className="form-control" id="amount" required />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="notes" className="form-label">Notes</label>
+              <input type="text" className="form-control" id="notes" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="time" className="form-label">Time</label>
+              <input type="time" className="form-control" id="time" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="paymentMethod" className="form-label">Payment Method</label>
+              <select className="form-select" id="paymentMethod">
+                <option value="Cash">Cash</option>
+                <option value="Credit Card">Credit Card</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+              </select>
+            </div>
+            <Button variant="primary" type="submit">Save Payment</Button>
+          </form>
         </Modal.Body>
       </Modal>
 
-      {/* Modal para Factura */}
-      <Modal show={showInvoice} onHide={() => setShowInvoice(false)}>
+      {/* Check-In Modal */}
+      <Modal show={showCheckInModal} onHide={() => setShowCheckInModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Invoice for {selectedReservation?.clientName}</Modal.Title>
+          <Modal.Title>Check In</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Date of Invoice: {new Date().toLocaleDateString()}</p>
-          <p>Reservation ID: {selectedReservation?.id}</p>
-          <ul>
-            {selectedReservation?.payments.map((payment, index) => (
-              <li key={index}>{payment.date} - ${payment.amount} ({payment.paymentMethod})</li>
-            ))}
-          </ul>
-          <p>Total Paid: ${selectedReservation?.payments.reduce((sum, payment) => sum + payment.amount, 0)}</p>
+          <p>Do you want to check in this client?</p>
+          <Button variant="success" onClick={() => handleCheckInConfirmation(true)}>Yes</Button>
+          <Button variant="danger" onClick={() => handleCheckInConfirmation(false)}>No</Button>
+        </Modal.Body>
+      </Modal>
+
+      {/* Invoice Modal */}
+      <Modal show={showInvoice} onHide={() => setShowInvoice(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Invoice for Reservation {selectedReservation?.id}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* Aquí iría la lógica para generar y mostrar la factura */}
+          <p>Generating invoice for reservation...</p>
         </Modal.Body>
       </Modal>
     </div>
