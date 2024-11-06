@@ -1,17 +1,6 @@
 {
   "clients": [
     {
-      "id": "30056463",
-      "firstName": "ashlyy",
-      "middleName": "hanneiker",
-      "lastName": "torres",
-      "email": "as@gmail.com",
-      "dateOfBirth": "2003-07-16",
-      "phoneNumber": "04126759712",
-      "numberPersons": "2",
-      "nationality": "venezolana"
-    },
-    {
       "id": "28061677",
       "firstName": "Juan",
       "middleName": "Pablo",
@@ -20,6 +9,28 @@
       "dateOfBirth": "2001-09-29",
       "phoneNumber": "04147109021",
       "numberPersons": "2",
+      "nationality": "venezolana"
+    },
+    {
+      "id": "30056463",
+      "firstName": "juan",
+      "middleName": "diego",
+      "lastName": "parra castillo",
+      "email": "juan@gmail.com",
+      "dateOfBirth": "2002-05-29",
+      "phoneNumber": "04247473075",
+      "numberPersons": "3",
+      "nationality": "venezolana"
+    },
+    {
+      "id": "30056463",
+      "firstName": "ashlyy",
+      "middleName": "hanneiker",
+      "lastName": "torres",
+      "email": "as@gmail.com",
+      "dateOfBirth": "2024-11-11",
+      "phoneNumber": "04247473075",
+      "numberPersons": "0",
       "nationality": "venezolana"
     }
   ],
@@ -30,6 +41,15 @@
       "dateCheckin": "2024-11-03",
       "dateCheckout": "2024-11-04",
       "numberNights": "2",
+      "roomAssigned": "2",
+      "clientId": null
+    },
+    {
+      "id": "5520",
+      "dateReserve": "2024-11-06",
+      "dateCheckin": "2024-11-06",
+      "dateCheckout": "2024-11-06",
+      "numberNights": "3",
       "roomAssigned": "2",
       "clientId": "30056463"
     }
@@ -48,7 +68,7 @@
     {
       "id": "PAY1001",
       "dateInvoice": "2024-11-11",
-      "amount": 200,
+      "amount": 201,
       "id_reservation": "37d2",
       "idClient": "30056463",
       "notes": "Second payment",
@@ -111,7 +131,7 @@
       "reservationId": null,
       "totalAmount": 500,
       "date": "2024-11-10",
-      "clientId": "30056463",
+      "clientId": null,
       "paymentIds": [
         "PAY4811",
         "PAY1001"
@@ -142,6 +162,16 @@
       "email": "parracastilloj6@gmail.com",
       "password": "12312",
       "phoneNumber": "121212",
+      "role": "reader"
+    },
+    {
+      "id": "54f7",
+      "username": "",
+      "firstName": "",
+      "lastName": "",
+      "email": "",
+      "password": "",
+      "phoneNumber": "",
       "role": "admin"
     }
   ],

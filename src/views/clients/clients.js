@@ -47,7 +47,7 @@ const Clients = () => {
 
   const handleOpenForm = () => { setEditClient(null); setShowForm(true); };
   const handleCloseForm = () => { setShowForm(false); };
-
+//no se esta utilizando
   const handleOpenReservationForm = (client) => {
     setSelectedClient(client);
     const isClientRegistered = clients.some(existingClient => existingClient.id === client.id);
@@ -71,7 +71,7 @@ const Clients = () => {
     }
   };
 
-  const addClient = (newClient) => {
+  const addClient = () => {
     axios.post('http://localhost:3001/clients', newClient)
       .then(response => {
         setClients([...clients, response.data]);
@@ -161,7 +161,7 @@ const Clients = () => {
       paymentMethod: form.paymentMethod.value,
     };
 
-    axios.post('http://localhost:3001/payments', newPayment) // Asegúrate de tener la ruta correcta para los pagos
+    axios.post('http://localhost:3001/payments', newPayment) 
       .then(response => {
         setShowPaymentForm(false);
         alert('Payment registered successfully!');
@@ -181,7 +181,7 @@ const Clients = () => {
   return (
     <div>
       <h2>Client Management</h2>
-      <Button variant="dark" onClick={handleOpenForm}>Add Client</Button>
+      <Button variant="dark" onClick={() => {}}>Add Client</Button>
       <input 
           type="text" 
           placeholder="Filter by Client ID" 
@@ -210,7 +210,7 @@ const Clients = () => {
               <tr className='text-center' key={client.id}>
                 <td>{client.id}</td>
                 <td>{client.firstName}</td>
-                <td>{client.middleName}</td>
+                <td>{client.midleName}</td>
                 <td>{client.lastName}</td>
                 <td>{client.email}</td>
                 <td>{client.dateOfBirth}</td>
@@ -246,7 +246,7 @@ const Clients = () => {
       type="date"
       id="reservationDateFilter"
       value={reservationDateFilter}
-      onChange={(e) => setReservationDateFilter(e.target.value)}
+      onChange={(e) => setReservationDateFilter(e.target)}
       className="form-control"
     />
   </div>
