@@ -10,28 +10,6 @@
       "phoneNumber": "04147109021",
       "numberPersons": "2",
       "nationality": "venezolana"
-    },
-    {
-      "id": "30056463",
-      "firstName": "juan",
-      "middleName": "diego",
-      "lastName": "parra castillo",
-      "email": "juan@gmail.com",
-      "dateOfBirth": "2002-05-29",
-      "phoneNumber": "04247473075",
-      "numberPersons": "3",
-      "nationality": "venezolana"
-    },
-    {
-      "id": "30056463",
-      "firstName": "ashlyy",
-      "middleName": "hanneiker",
-      "lastName": "torres",
-      "email": "as@gmail.com",
-      "dateOfBirth": "2024-11-11",
-      "phoneNumber": "04247473075",
-      "numberPersons": "0",
-      "nationality": "venezolana"
     }
   ],
   "reservations": [
@@ -51,7 +29,7 @@
       "dateCheckout": "2024-11-06",
       "numberNights": "3",
       "roomAssigned": "2",
-      "clientId": "30056463"
+      "clientId": null
     }
   ],
   "payments": [

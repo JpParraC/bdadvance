@@ -52,7 +52,7 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 const TestComponent = React.lazy(() => import('./views/testpage/testcomponent'));
-const Clients = React.lazy(() => import('./views/cliennts/clients'));
+const Clients = React.lazy(() => import('./views/clients/clients'));
 const Calendar = React.lazy(() => import('./views/calendar/roomcalendar'));
 const AddManageAdmins = React.lazy(() => import('./views/adm/AddManageAdmins'));
 const rooms = React.lazy(() => import('./views/room/room'));

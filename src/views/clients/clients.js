@@ -70,7 +70,7 @@ const Clients = () => {
       alert('Client must be checked in to make a reservation.');
     }
   };
-
+  
   const addClient = () => {
     axios.post('http://localhost:3001/clients', newClient)
       .then(response => {
@@ -181,7 +181,7 @@ const Clients = () => {
   return (
     <div>
       <h2>Client Management</h2>
-      <Button variant="dark" onClick={() => {}}>Add Client</Button>
+      <Button variant="dark" onClick={handleOpenForm}>Add Client</Button>
       <input 
           type="text" 
           placeholder="Filter by Client ID" 
@@ -246,7 +246,7 @@ const Clients = () => {
       type="date"
       id="reservationDateFilter"
       value={reservationDateFilter}
-      onChange={(e) => setReservationDateFilter(e.target)}
+      onChange={(e) => setReservationDateFilter(e.target.value)}
       className="form-control"
     />
   </div>
