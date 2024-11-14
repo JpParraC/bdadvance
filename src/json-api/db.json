@@ -9,27 +9,52 @@
       "dateOfBirth": "2001-09-29",
       "phoneNumber": "04147109021",
       "numberPersons": "2",
-      "nationality": "venezolana"
+      "nationality": "venezolana",
+      "roomType": "TYPE001"
+    },
+    {
+      "id": "30056463",
+      "firstName": "Ashly",
+      "middleName": "Hanneiker",
+      "lastName": "Torres",
+      "email": "as@gmail.com",
+      "dateOfBirth": "0003-07-15",
+      "phoneNumber": "04147109021",
+      "numberPersons": "2",
+      "nationality": "venezolana",
+      "roomType": "TYPE002"
     }
   ],
   "reservations": [
     {
-      "id": "148c",
-      "dateReserve": "2024-11-03",
-      "dateCheckin": "2024-11-03",
-      "dateCheckout": "2024-11-04",
-      "numberNights": "2",
-      "roomAssigned": "2",
-      "clientId": null
+      "id": "a058",
+      "dateReserve": "2024-11-14",
+      "dateCheckin": "2024-11-14",
+      "dateCheckout": "2024-11-21",
+      "numberNights": 7,
+      "roomAssigned": "ROOM001",
+      "roomType": "TYPE001",
+      "clientId": "28061677"
     },
     {
-      "id": "5520",
-      "dateReserve": "2024-11-06",
-      "dateCheckin": "2024-11-06",
-      "dateCheckout": "2024-11-06",
-      "numberNights": "3",
-      "roomAssigned": "2",
-      "clientId": null
+      "id": "53a2",
+      "dateReserve": "2024-11-14",
+      "dateCheckin": "2024-11-22",
+      "dateCheckout": "2024-11-24",
+      "numberNights": 2,
+      "roomAssigned": "ROOM001",
+      "roomType": "TYPE001",
+      "clientId": "30056463"
+    },
+    {
+      "id": "fcb4",
+      "dateReserve": "2024-11-14",
+      "dateCheckin": "2024-11-15",
+      "dateCheckout": "2024-11-17",
+      "numberNights": 2,
+      "roomAssigned": "ROOM002",
+      "roomType": "TYPE002",
+      "clientId": "28061677"
     }
   ],
   "payments": [
@@ -328,36 +353,104 @@
       "hotel_floor": 2
     }
   ],
-  "rooms": [
-    {
-      "id": "ROOM001",
-      "status": "available",
-      "equipment": [
-        "EQUIP001",
-        "EQUIP002",
-        "EQUIP004"
-      ],
-      "typeId": "TYPE001"
-    },
-    {
-      "id": "ROOM002",
-      "status": "occupied",
-      "equipment": [
-        "EQUIP003",
-        "EQUIP005",
-        "EQUIP006"
-      ],
-      "typeId": "TYPE002"
-    },
-    {
-      "id": "ROOM003",
-      "status": "available",
-      "equipment": [
-        "EQUIP007",
-        "EQUIP008",
-        "EQUIP009"
-      ],
-      "typeId": "TYPE003"
-    }
-  ]
-}
+  
+    "rooms": [
+      {
+        "id": "ROOM001",
+        "status": "available",
+        "equipment": [
+          "EQUIP001",
+          "EQUIP002",
+          "EQUIP004"
+        ],
+        "typeId": "TYPE001"
+      },
+      {
+        "id": "ROOM002",
+        "status": "available",
+        "equipment": [
+          "EQUIP003",
+          "EQUIP005",
+          "EQUIP006"
+        ],
+        "typeId": "TYPE002"
+      },
+      {
+        "id": "ROOM003",
+        "status": "available",
+        "equipment": [
+          "EQUIP007",
+          "EQUIP008",
+          "EQUIP009"
+        ],
+        "typeId": "TYPE003"
+      },
+      {
+        "id": "ROOM004",
+        "status": "occupied",
+        "equipment": [
+          "EQUIP010",
+          "EQUIP011"
+        ],
+        "typeId": "TYPE002"
+      },
+      {
+        "id": "ROOM005",
+        "status": "available",
+        "equipment": [
+          "EQUIP012",
+          "EQUIP013",
+          "EQUIP014"
+        ],
+        "typeId": "TYPE001"
+      },
+      {
+        "id": "ROOM006",
+        "status": "available",
+        "equipment": [
+          "EQUIP015",
+          "EQUIP016"
+        ],
+        "typeId": "TYPE002"
+      },
+      {
+        "id": "ROOM007",
+        "status": "occupied",
+        "equipment": [
+          "EQUIP017",
+          "EQUIP018",
+          "EQUIP019"
+        ],
+        "typeId": "TYPE003"
+      },
+      {
+        "id": "ROOM008",
+        "status": "available",
+        "equipment": [
+          "EQUIP020",
+          "EQUIP021"
+        ],
+        "typeId": "TYPE003"
+      },
+      {
+        "id": "ROOM009",
+        "status": "available",
+        "equipment": [
+          "EQUIP022",
+          "EQUIP023",
+          "EQUIP024"
+        ],
+        "typeId": "TYPE001"
+      },
+      {
+        "id": "ROOM010",
+        "status": "occupied",
+        "equipment": [
+          "EQUIP025",
+          "EQUIP026"
+        ],
+        "typeId": "TYPE002"
+      }
+    ]
+  }
+  

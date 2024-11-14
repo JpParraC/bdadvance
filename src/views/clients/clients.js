@@ -71,7 +71,7 @@ const Clients = () => {
     }
   };
   
-  const addClient = () => {
+  const addClient = (newClient) => { 
     axios.post('http://localhost:3001/clients', newClient)
       .then(response => {
         setClients([...clients, response.data]);
@@ -235,7 +235,13 @@ const Clients = () => {
           </tbody>
         </Table>
       </div>
-      <ClientsForm show={showForm} handleClose={handleCloseForm} client={editClient} handleSave={editClient ? updateClient : addClient} />
+      <ClientsForm
+        show={showForm}
+        handleClose={handleCloseForm}
+        client={editClient}
+        handleSave={editClient ? updateClient : addClient}
+      />
+
 
       {/* Reservations Section */}
       <h2 className="mt-5">Reservations</h2>
@@ -269,7 +275,7 @@ const Clients = () => {
           <tbody>
             {filteredReservations.map((reservation) => (
               <tr className='text-center' key={reservation.id}>
-                <td>{reservation.clientId}</td>
+                <td>{reservation.id}</td>
                 <td>{reservation.dateReserve}</td>
                 <td>{reservation.dateCheckin}</td>
                 <td>{reservation.dateCheckout}</td>

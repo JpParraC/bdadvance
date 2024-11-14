@@ -1,7 +1,106 @@
+/* Background for login page */
 .login-background {
-    background-image: url('../assets/images/background.png');
-    background-size: cover;
-    background-position: center;
-    height: 100vh; /* Full height */
-  }
-  
+  background-image: url('../assets/images/background.png');
+  background-size: cover;
+  background-position: center;
+  height: 100vh; /* Full height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff; /* Ensuring text is visible on the background */
+}
+
+/* Custom styles for the Calendar */
+.calendar-custom {
+border-radius: 15px; /* More rounded corners for a modern look */
+background-color: #ffffff; /* White background for the calendar */
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Larger shadow for more depth */
+padding: 30px; /* Increased padding for spacious feel */
+max-width: 500px; /* Limit calendar width */
+margin: auto; /* Center the calendar */
+}
+
+.calendar-custom .react-calendar {
+border-radius: 15px; /* Rounded calendar */
+overflow: hidden; /* Ensure the corners are rounded */
+}
+
+.calendar-custom .react-calendar__tile {
+border-radius: 8px; /* Rounded corners for each tile */
+transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
+}
+
+.calendar-custom .react-calendar__tile:hover {
+background-color: #80deea; /* Light blue on hover */
+cursor: pointer;
+}
+
+.calendar-custom .react-calendar__tile--active {
+background-color: #0288d1; /* Active tile color */
+color: white;
+font-weight: bold;
+}
+
+
+
+.calendar-custom .react-calendar__month-view__days__day--weekend {
+color: #d32f2f; /* Highlight weekends with red */
+}
+
+.calendar-custom .react-calendar__month-view__weekdays {
+font-weight: bold; /* Make the weekday names bold */
+color: #0288d1; /* Blue color for weekdays */
+font-size: 14px;
+}
+
+/* Additional styling for rooms */
+.room {
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* More pronounced shadow around room blocks */
+transition: all 0.3s ease-in-out;
+border-radius: 8px; /* Rounded corners for room blocks */
+padding: 20px;
+display: flex;
+justify-content: center;
+align-items: center;
+text-align: center;
+height: 120px;
+}
+
+.room:hover {
+transform: translateY(-10px); /* Slight lift effect with larger movement */
+}
+
+.room.available {
+background-color: #4caf50; /* Green for available rooms */
+color: white;
+box-shadow: 0 6px 15px rgba(76, 175, 80, 0.3); /* Greenish shadow */
+}
+
+.room.occupied {
+background-color: #f44336; /* Red for occupied rooms */
+color: white;
+box-shadow: 0 6px 15px rgba(244, 67, 54, 0.3); /* Red shadow */
+}
+
+.room p {
+margin: 0;
+font-size: 14px;
+font-weight: bold;
+letter-spacing: 1px;
+}
+
+.room .room-name {
+font-size: 16px; /* Larger font for room name */
+font-weight: 600;
+}
+
+.room .room-status {
+font-size: 12px;
+color: #f1f1f1;
+text-transform: uppercase;
+}
+
+/* Add some spacing between the rooms in the grid */
+.room-container {
+margin-top: 30px;
+}
