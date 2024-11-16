@@ -56,6 +56,8 @@ const Clients = React.lazy(() => import('./views/clients/clients'));
 const Calendar = React.lazy(() => import('./views/calendar/roomcalendar'));
 const AddManageAdmins = React.lazy(() => import('./views/adm/AddManageAdmins'));
 const rooms = React.lazy(() => import('./views/room/room'));
+const staff = React.lazy(() => import('./views/staff/staff'));
+
 
 
 
@@ -68,6 +70,7 @@ const routes = [
   { path: '/clients', name: 'Clients', element: Clients },
   { path: '/adm', name: 'adm', element: AddManageAdmins },
   { path: '/room', name: 'room', element: rooms },
+  { path: '/staff', name: 'staff', element: staff },
 
   { path: '/calendar', name: 'Calendar', element: Calendar },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
