@@ -3,7 +3,7 @@ import { Table, Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import { CIcon } from '@coreui/icons-react';
 import { cilPen, cilTrash, cilCheck } from '@coreui/icons';
-import TaskForm from './TaskForm'; // Formulario para tareas
+import TaskForm from './taskform'; // Formulario para tareas
 import StaffForm from '../staff/stafform';  // Sin la 's' final
 
 const Tasks = () => {
