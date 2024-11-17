@@ -9,8 +9,7 @@
       "dateOfBirth": "2001-09-29",
       "phoneNumber": "04147109021",
       "numberPersons": "2",
-      "nationality": "venezolana",
-      "roomType": "TYPE001"
+      "nationality": "venezolana"
     },
     {
       "id": "30056463",
@@ -34,22 +33,33 @@
       "phoneNumber": "04247473075",
       "numberPersons": "3",
       "nationality": "venezolana"
+    },
+    {
+      "id": "5022276",
+      "firstName": "marilu",
+      "middleName": "none",
+      "lastName": "rubio de velandia",
+      "email": "marilu@gmail.com",
+      "dateOfBirth": "1952-07-26",
+      "phoneNumber": "04147109021",
+      "numberPersons": "1",
+      "nationality": "venezolana"
     }
   ],
   "reservations": [
     {
       "id": "a058",
       "dateReserve": "2024-11-14",
-      "dateCheckin": "2024-11-14",
+      "dateCheckin": "2024-11-15",
       "dateCheckout": "2024-11-21",
-      "numberNights": 7,
-      "roomAssigned": "ROOM001",
+      "numberNights": 6,
+      "roomAssigned": "ROOM009",
       "roomType": "TYPE001",
       "clientId": "28061677"
     },
     {
       "id": "53a2",
-      "dateReserve": "2024-11-14",
+      "dateReserve": "2024-11-12",
       "dateCheckin": "2024-11-22",
       "dateCheckout": "2024-11-24",
       "numberNights": 2,
@@ -59,7 +69,7 @@
     },
     {
       "id": "fcb4",
-      "dateReserve": "2024-11-14",
+      "dateReserve": "2024-11-12",
       "dateCheckin": "2024-11-15",
       "dateCheckout": "2024-11-17",
       "numberNights": 2,
@@ -69,7 +79,7 @@
     },
     {
       "id": "0f6a",
-      "dateReserve": "2024-11-14",
+      "dateReserve": "2024-11-13",
       "dateCheckin": "2024-11-15",
       "dateCheckout": "2024-11-17",
       "numberNights": 2,
@@ -96,6 +106,16 @@
       "roomAssigned": "ROOM005",
       "roomType": "TYPE001",
       "clientId": "28061677"
+    },
+    {
+      "id": "3d09",
+      "dateReserve": "2024-11-17",
+      "dateCheckin": "2024-11-21",
+      "dateCheckout": "2024-11-29",
+      "numberNights": 8,
+      "roomAssigned": "ROOM003",
+      "roomType": "TYPE003",
+      "clientId": "30818050"
     }
   ],
   "payments": [
@@ -185,6 +205,7 @@
   "admins": [
     {
       "id": "1",
+      "cedula": "28061678",
       "username": "admin1",
       "firstName": "Carloss",
       "lastName": "Rodriguezz",
@@ -200,23 +221,14 @@
     },
     {
       "id": "2",
+      "cedula": "28061677",
       "username": "admin2",
-      "firstName": "Juan",
+      "firstName": "Juanqq",
       "lastName": "Pablo",
       "email": "parracastilloj6@gmail.com",
-      "password": "12312",
+      "password": "12",
       "phoneNumber": "121212",
       "role": "reader"
-    },
-    {
-      "id": "54f7",
-      "username": "",
-      "firstName": "",
-      "lastName": "",
-      "email": "",
-      "password": "",
-      "phoneNumber": "",
-      "role": "admin"
     }
   ],
   "room_equipment": [
@@ -494,7 +506,7 @@
   ],
   "rol_staff": [
     {
-      "id": 1,
+      "id": "1",
       "role": "Manager",
       "permissions": [
         "manage_clients",
@@ -504,7 +516,7 @@
       ]
     },
     {
-      "id": 2,
+      "id": "2",
       "role": "Receptionist",
       "permissions": [
         "check_in_clients",
@@ -513,7 +525,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": "3",
       "role": "Housekeeping",
       "permissions": [
         "update_room_status",
@@ -564,9 +576,10 @@
     {
       "id": "d01e",
       "description": "cleaning",
-      "status": "pending",
+      "status": "Completed",
       "staffId": "12345678",
-      "createdAt": "2024-11-17"
+      "createdAt": "2024-11-17",
+      "completedAt": "2024-11-17T16:35:41.989Z"
     },
     {
       "id": "c059",
@@ -574,11 +587,18 @@
       "status": "pending",
       "staffId": "V-87654321",
       "createdAt": "2024-11-17"
+    },
+    {
+      "id": "ad8c",
+      "description": "check_out",
+      "status": "pending",
+      "staffId": "29699502",
+      "createdAt": "2024-11-17"
     }
   ],
   "completed_tasks": [
     {
-      "id": 3,
+      "id": "3",
       "description": "Fix styling issues on homepage",
       "status": "Completed",
       "staffId": 3,
@@ -586,7 +606,7 @@
       "completedAt": "2024-11-14T11:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "description": "Update user profile section",
       "status": "Completed",
       "staffId": 2,

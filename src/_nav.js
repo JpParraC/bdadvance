@@ -78,25 +78,7 @@ const _nav = [
     to: '/task', 
     icon: <CIcon icon={cilTask} customClassName="nav-icon" />,
    
-  },
-  {
-    component: CNavGroup,
-    name: 'Pages',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Login',
-        to: '/login',
-      },
-      {
-        component: CNavItem,
-        name: 'Register',
-        to: '/register',
-      },
-      
-    ],
-  },
+  }
  
 ];
 

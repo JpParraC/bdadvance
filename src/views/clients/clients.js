@@ -23,17 +23,26 @@ const Clients = () => {
   const [reservationDateFilter, setReservationDateFilter] = useState(''); // Filtro de fecha de reservación
 
 
-  const fetchClients = () => {
-    axios.get('http://localhost:3001/clients')
-      .then(response => setClients(response.data))
-      .catch(error => console.error("Error loading clients:", error));
+  const fetchClients = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/clients');
+      setClients(response.data);
+    } catch (error) {
+      console.error("Error loading clients:", error);
+      alert("An error occurred while fetching clients.");
+    }
   };
-
-  const fetchReservations = () => {
-    axios.get('http://localhost:3001/reservations')
-      .then(response => setReservations(response.data))
-      .catch(error => console.error("Error loading reservations:", error));
+  
+  const fetchReservations = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/reservations');
+      setReservations(response.data);
+    } catch (error) {
+      console.error("Error loading reservations:", error);
+      alert("An error occurred while fetching reservations.");
+    }
   };
+  
 
   const filteredClients = clients.filter(client => 
     client.id.toString().includes(clientIdFilter)
@@ -71,35 +80,42 @@ const Clients = () => {
     }
   };
   
-  const addClient = (newClient) => { 
-    axios.post('http://localhost:3001/clients', newClient)
-      .then(response => {
-        setClients([...clients, response.data]);
-        setShowForm(false);
-      })
-      .catch(error => console.error("Error adding client:", error));
+  const addClient = async (newClient) => {
+    try {
+      const response = await axios.post('http://localhost:3001/clients', newClient);
+      setClients([...clients, response.data]);
+      setShowForm(false);
+    } catch (error) {
+      console.error("Error adding client:", error);
+      alert("An error occurred while adding the client.");
+    }
   };
-
-  const updateClient = (updatedClient) => {
-    axios.put(`http://localhost:3001/clients/${updatedClient.id}`, updatedClient)
-      .then(response => {
-        const updatedClients = clients.map(client => 
-          client.id === updatedClient.id ? response.data : client
-        );
-        setClients(updatedClients);
-        setShowForm(false);
-      })
-      .catch(error => console.error("Error updating client:", error));
+  
+  const updateClient = async (updatedClient) => {
+    try {
+      const response = await axios.put(`http://localhost:3001/clients/${updatedClient.id}`, updatedClient);
+      const updatedClients = clients.map(client => 
+        client.id === updatedClient.id ? response.data : client
+      );
+      setClients(updatedClients);
+      setShowForm(false);
+    } catch (error) {
+      console.error("Error updating client:", error);
+      alert("An error occurred while updating the client.");
+    }
   };
+  
 
-  const deleteClient = (id) => {
-    axios.delete(`http://localhost:3001/clients/${id}`)
-      .then(() => {
-        setClients(clients.filter(client => client.id !== id));
-      })
-      .catch(error => console.error("Error deleting client:", error));
+  const deleteClient = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3001/clients/${id}`);
+      setClients(clients.filter(client => client.id !== id));
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      alert("An error occurred while deleting the client.");
+    }
   };
-
+  
   const addReservation = (newReservation) => {
     if (clientCheckedIn && selectedClient) {
       newReservation.clientId = selectedClient.id;
@@ -210,7 +226,7 @@ const Clients = () => {
               <tr className='text-center' key={client.id}>
                 <td>{client.id}</td>
                 <td>{client.firstName}</td>
-                <td>{client.midleName}</td>
+                <td>{client.middleName}</td>
                 <td>{client.lastName}</td>
                 <td>{client.email}</td>
                 <td>{client.dateOfBirth}</td>
