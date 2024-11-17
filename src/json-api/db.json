@@ -491,5 +491,107 @@
       ],
       "typeId": "TYPE002"
     }
+  ],
+  "rol_staff": [
+    {
+      "id": 1,
+      "role": "Manager",
+      "permissions": [
+        "manage_clients",
+        "manage_reservations",
+        "approve_payments",
+        "view_reports"
+      ]
+    },
+    {
+      "id": 2,
+      "role": "Receptionist",
+      "permissions": [
+        "check_in_clients",
+        "manage_reservations",
+        "handle_inquiries"
+      ]
+    },
+    {
+      "id": 3,
+      "role": "Housekeeping",
+      "permissions": [
+        "update_room_status",
+        "report_maintenance_issues"
+      ]
+    }
+  ],
+  "staff": [
+    {
+      "id": "12345678",
+      "firstName": "Juana",
+      "middleName": "Carlos",
+      "lastName": "Pérez",
+      "email": "juan.perez@example.com",
+      "phone": "1234567890",
+      "position": "Manager",
+      "department": "Sales",
+      "hireDate": "2023-01-15",
+      "status": "Active",
+      "rol_staff_id": 1
+    },
+    {
+      "id": "V-87654321",
+      "firstName": "Maria",
+      "middleName": "Luisa",
+      "lastName": "Gómez",
+      "email": "maria.gomez@example.com",
+      "phone": "0987654321",
+      "position": "Receptionist",
+      "department": "Front Desk",
+      "hireDate": "2022-08-10",
+      "status": "Active",
+      "rol_staff_id": 2
+    },
+    {
+      "id": "29699502",
+      "firstName": "juana",
+      "middleName": "asas",
+      "lastName": "pablo",
+      "email": "sasaasa@gmail.com",
+      "phone": "1212122",
+      "hireDate": "2024-11-16",
+      "status": "Active",
+      "rol_staff_id": "1"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "d01e",
+      "description": "cleaning",
+      "status": "pending",
+      "staffId": "12345678",
+      "createdAt": "2024-11-17"
+    },
+    {
+      "id": "c059",
+      "description": "concierge",
+      "status": "pending",
+      "staffId": "V-87654321",
+      "createdAt": "2024-11-17"
+    }
+  ],
+  "completed_tasks": [
+    {
+      "id": 3,
+      "description": "Fix styling issues on homepage",
+      "status": "Completed",
+      "staffId": 3,
+      "createdAt": "2024-11-14T10:00:00Z",
+      "completedAt": "2024-11-14T11:00:00Z"
+    },
+    {
+      "id": 4,
+      "description": "Update user profile section",
+      "status": "Completed",
+      "staffId": 2,
+      "createdAt": "2024-11-13T09:15:00Z",
+      "completedAt": "2024-11-13T10:00:00Z"
+    }
   ]
 }

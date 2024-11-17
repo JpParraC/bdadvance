@@ -2,6 +2,7 @@ import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
   cilBell,
+  cilBriefcase,
   cilCalculator,
   cilCalendar,
   cilChartPie,
@@ -12,11 +13,16 @@ import {
   cilGroup,
   cilNotes,
   cilPencil,
+  cilPeople,
   cilPuzzle,
   cilRoom,
   cilSpeedometer,
   cilStar,
+  cilTask,
   cilUser,
+  cilUserFollow,
+  cilUserPlus,
+  cilWallpaper,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -54,9 +60,23 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Rooms', // Nombre que aparecerá en el menú
-    to: '/room', // Ruta hacia la pantalla de clientes
+    name: 'Rooms', 
+    to: '/room', 
     icon: <CIcon icon={cilRoom} customClassName="nav-icon" />,
+   
+  },
+  {
+    component: CNavItem,
+    name: 'Staff', 
+    to: '/staff', 
+    icon: <CIcon icon={cilBriefcase} customClassName="nav-icon" />,
+   
+  },
+  {
+    component: CNavItem,
+    name: 'Task', 
+    to: '/task', 
+    icon: <CIcon icon={cilTask} customClassName="nav-icon" />,
    
   },
   {
