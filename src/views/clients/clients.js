@@ -47,8 +47,7 @@ const Clients = () => {
   const filteredClients = clients.filter(client => 
     client.id.toString().includes(clientIdFilter)
   );
-  
-
+ 
   useEffect(() => {
     fetchClients();
     fetchReservations();
@@ -271,6 +270,17 @@ const Clients = () => {
       onChange={(e) => setReservationDateFilter(e.target.value)}
       className="form-control"
     />
+   
+  </div>
+  <div className="col-md-2">
+       <input 
+          type="text" 
+          placeholder="Filter by Client ID" 
+          value={clientIdFilter} 
+          onChange={(e) => setClientIdFilter(e.target.value)} 
+          style={{ marginLeft: '10px', padding: '5px' }} 
+       />
+   
   </div>
 </div>
 
@@ -279,6 +289,7 @@ const Clients = () => {
         <Table striped bordered hover>
           <thead>
             <tr className='text-center'>
+              <th> ID reservation</th>
               <th>Client ID</th>
               <th>Reservation Date</th>
               <th>Check-In Date</th>
@@ -292,6 +303,7 @@ const Clients = () => {
             {filteredReservations.map((reservation) => (
               <tr className='text-center' key={reservation.id}>
                 <td>{reservation.id}</td>
+                <td>{reservation.clientId}</td>
                 <td>{reservation.dateReserve}</td>
                 <td>{reservation.dateCheckin}</td>
                 <td>{reservation.dateCheckout}</td>

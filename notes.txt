@@ -1,0 +1,19 @@
+Se ha instalado @coreui/react
+
+se ha creado el archivo:
+clientsform.js, clients.js, confirmdialog.js, 
+
+se ha instalado react calendar una biblioteca
+
+se ha instalado fortawesonme
+
+npm start
+
+se ha cambiado el puerto de json server a 3001, y el de la aplicación fronted queda en el puerto 3000
+
+
+ npx json-server --watch src/json-api/db.json --port 3001
+
+ git add .
+ git commit -m "comentario"
+ git push origin main
