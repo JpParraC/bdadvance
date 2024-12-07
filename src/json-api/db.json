@@ -68,16 +68,6 @@
       "clientId": "30056463"
     },
     {
-      "id": "fcb4",
-      "dateReserve": "2024-11-12",
-      "dateCheckin": "2024-11-15",
-      "dateCheckout": "2024-11-17",
-      "numberNights": 2,
-      "roomAssigned": "ROOM002",
-      "roomType": "TYPE002",
-      "clientId": "28061677"
-    },
-    {
       "id": "0f6a",
       "dateReserve": "2024-11-13",
       "dateCheckin": "2024-11-15",
@@ -187,12 +177,32 @@
       "notes": "aaa",
       "time": "00:35",
       "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY2902",
+      "dateInvoice": "2024-12-07",
+      "amount": 11,
+      "id_reservation": 1,
+      "idClient": "",
+      "notes": "asda",
+      "time": "03:17",
+      "paymentMethod": "Credit Card"
+    },
+    {
+      "id": "PAY8593",
+      "dateInvoice": "2024-12-07",
+      "amount": 12,
+      "id_reservation": 1,
+      "idClient": "",
+      "notes": "a",
+      "time": "02:18",
+      "paymentMethod": "Credit Card"
     }
   ],
   "invoices": [
     {
       "id": "1",
-      "reservationId": null,
+      "reservationId": 1,
       "totalAmount": 500,
       "date": "2024-11-10",
       "clientId": null,
@@ -226,7 +236,7 @@
       "firstName": "Juanqq",
       "lastName": "Pablo",
       "email": "parracastilloj6@gmail.com",
-      "password": "12",
+      "password": "123",
       "phoneNumber": "121212",
       "role": "reader"
     }
@@ -584,16 +594,18 @@
     {
       "id": "c059",
       "description": "concierge",
-      "status": "pending",
+      "status": "Completed",
       "staffId": "V-87654321",
-      "createdAt": "2024-11-17"
+      "createdAt": "2024-11-17",
+      "completedAt": "2024-11-20T20:24:40.390Z"
     },
     {
       "id": "ad8c",
       "description": "check_out",
-      "status": "pending",
+      "status": "Completed",
       "staffId": "29699502",
-      "createdAt": "2024-11-17"
+      "createdAt": "2024-11-17",
+      "completedAt": "2024-11-20T20:25:09.235Z"
     }
   ],
   "completed_tasks": [

@@ -8,7 +8,7 @@ import {
   CSidebarHeader,
   CSidebarToggler,
 } from '@coreui/react';
-
+import '../css/styles.css';
 import { AppSidebarNav } from './AppSidebarNav';
 
 // sidebar nav config
@@ -25,7 +25,7 @@ const AppSidebar = () => {
   return (
     <CSidebar
       className="border-end"
-      colorScheme="light" // Forzar el modo claro (light)
+      colorScheme="licht" // Forzar el modo claro (light)
       style={{ backgroundColor: '#b4d3ff' }} // Fondo claro opcional
       position="fixed"
       unfoldable={unfoldable}

@@ -21,6 +21,7 @@ import {
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilPen, cilTrash } from '@coreui/icons';
+import '../../css/styles.css';
 
 const AddManageAdmins = () => {
   const [admins, setAdmins] = useState([]);
@@ -125,7 +126,7 @@ const AddManageAdmins = () => {
 
   return (
     <div className="container">
-      <h2 className="mb-3">Manage Administrators</h2>
+      <h2 className="mb-3 bl  ">Manage Administrators</h2>
 
       <div className="text-start">
         <CButton color="success" onClick={() => setAddModalVisible(true)} className="px-4">
@@ -133,52 +134,58 @@ const AddManageAdmins = () => {
         </CButton>
       </div>
 
-      {/* Table for displaying admins */}
-      <CCard className="mt-4 shadow-sm">
-        <CCardHeader style={{ backgroundColor: '#f8f9fa' }}>
-          <h3>Administrator List</h3>
-        </CCardHeader>
-        <CCardBody>
-          <CTable hover responsive striped bordered>
-            <CTableHead>
-              <CTableRow className="text-center">
-                <CTableHeaderCell>ID</CTableHeaderCell>
-                <CTableHeaderCell>Username</CTableHeaderCell>
-                <CTableHeaderCell>First Name</CTableHeaderCell>
-                <CTableHeaderCell>Last Name</CTableHeaderCell>
-                <CTableHeaderCell>Email</CTableHeaderCell>
-                <CTableHeaderCell>Role</CTableHeaderCell>
-                <CTableHeaderCell>Actions</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {admins.map(admin => (
-                <CTableRow className="text-center" key={admin.id}>
-                  <CTableDataCell>{admin.id}</CTableDataCell>
-                  <CTableDataCell>{admin.username}</CTableDataCell>
-                  <CTableDataCell>{admin.firstName}</CTableDataCell>
-                  <CTableDataCell>{admin.lastName}</CTableDataCell>
-                  <CTableDataCell>{admin.email}</CTableDataCell>
-                  <CTableDataCell>{admin.role}</CTableDataCell>
-                  <CTableDataCell>
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                      <CButton variant="link" onClick={() => handleEditAdmin(admin.id)} title="Edit">
-                        <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
-                      </CButton>
-                      <CButton variant="link" onClick={() => {
-                        setAdminToDelete(admin);
-                        setDeleteModalVisible(true);
-                      }} title="Delete">
-                        <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
-                      </CButton>
-                    </div>
-                  </CTableDataCell>
-                </CTableRow>
-              ))}
-            </CTableBody>
-          </CTable>
-        </CCardBody>
-      </CCard>
+      <div className="table-responsive mt-3">
+        <div className='custom-table-container'>
+        <table className="custom-table">
+                <thead>
+                    <tr className="text-center">
+                      <th>ID</th>
+                      <th>Username</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {admins.map(admin => (
+                    <tr className="text-center" key={admin.id}>
+                      <td>{admin.id}</td>
+                      <td>{admin.username}</td>
+                      <td>{admin.firstName}</td>
+                      <td>{admin.lastName}</td>
+                      <td>{admin.email}</td>
+                      <td>{admin.role}</td>
+                      <td>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                          <button
+                            className="btn btn-link"
+                            onClick={() => handleEditAdmin(admin.id)}
+                            title="Edit"
+                          >
+                            <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }}/>
+                          </button>
+                          <button
+                            className="btn btn-link"
+                            onClick={() => {
+                              setAdminToDelete(admin);
+                              setDeleteModalVisible(true);
+                            }}
+                            title="Delete"
+                          >
+                          <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }}  />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+          </table>
+
+        </div>
+      </div>
+    
 
       {/* Modal for Adding Administrator */}
       <CModal visible={addModalVisible} onClose={() => setAddModalVisible(false)}>

@@ -5,6 +5,7 @@ import ReservationForm from './reservationform';
 import { CIcon } from '@coreui/icons-react';
 import { cilPen, cilTrash, cilMoney, cilFile, cilCalendar } from '@coreui/icons';
 import axios from 'axios';
+import '../../css/styles.css';
 
 const Clients = () => {
   const [clients, setClients] = useState([]);
@@ -195,17 +196,23 @@ const Clients = () => {
 
   return (
     <div>
-      <h2>Client Management</h2>
-      <Button variant="dark" onClick={handleOpenForm}>Add Client</Button>
-      <input 
-          type="text" 
-          placeholder="Filter by Client ID" 
-          value={clientIdFilter} 
-          onChange={(e) => setClientIdFilter(e.target.value)} 
-          style={{ marginLeft: '10px', padding: '5px' }} 
-        />
-      <div className="table-responsive mt-3">
-        <Table striped bordered hover>
+      <h2 className='bl'>Client Management</h2>
+      <Button className="button-blue" onClick={handleOpenForm}>Add Client</Button>
+      <input
+        type="number"
+        placeholder="Filter by Client ID"
+        value={clientIdFilter}
+        onChange={(e) => setClientIdFilter(e.target.value)}
+        className="search-input"
+        style={{ marginLeft: '10px', padding: '5px' }}
+        min="0" /* Establece un valor mínimo si es necesario */
+        max="999999" /* Establece un valor máximo si es necesario */
+        step="1" /* Establece el valor de incremento (por ejemplo, solo números enteros) */
+      />
+
+      <div className="table-responsive hh mt-3">
+        <div className="custom-table-container">
+        <Table className="custom-table" >
           <thead>
             <tr className='text-center'>
               <th>ID</th>
@@ -249,6 +256,8 @@ const Clients = () => {
             ))}
           </tbody>
         </Table>
+        </div>
+       
       </div>
       <ClientsForm
         show={showForm}
@@ -258,47 +267,49 @@ const Clients = () => {
       />
 
 
-      {/* Reservations Section */}
-      <h2 className="mt-5">Reservations</h2>
-      <div className="mb-3 row">
-  
-  <div className="col-md-2">
-    <input
-      type="date"
-      id="reservationDateFilter"
-      value={reservationDateFilter}
-      onChange={(e) => setReservationDateFilter(e.target.value)}
-      className="form-control"
-    />
-   
+        
+        <h2 className="mt-5 bl">Reservations</h2>
+        <div className="mb-3 row">
+    
+    <div className="col-md-2">
+      <input
+        type="date"
+        id="reservationDateFilter"
+        value={reservationDateFilter}
+        onChange={(e) => setReservationDateFilter(e.target.value)}
+        className="form-control"
+      />
+    
+    </div>
+    <div className="col-md-2">
+        <input 
+            type="text" 
+            placeholder="Filter by Client ID" 
+            value={clientIdFilter} 
+            onChange={(e) => setClientIdFilter(e.target.value)} 
+            style={{ marginLeft: '-15px', padding: '5px' }} 
+             className="search-input"
+        />
+    
+    </div>
   </div>
-  <div className="col-md-2">
-       <input 
-          type="text" 
-          placeholder="Filter by Client ID" 
-          value={clientIdFilter} 
-          onChange={(e) => setClientIdFilter(e.target.value)} 
-          style={{ marginLeft: '10px', padding: '5px' }} 
-       />
-   
-  </div>
-</div>
 
 
       <div className="table-responsive mt-3">
-        <Table striped bordered hover>
-          <thead>
-            <tr className='text-center'>
-              <th> ID reservation</th>
-              <th>Client ID</th>
-              <th>Reservation Date</th>
-              <th>Check-In Date</th>
-              <th>Check-Out Date</th>
-              <th>Number of Nights</th>
-              <th>Room Assigned</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+        <div className="custom-table-container">
+          <Table className=" custom-table" >
+           <thead>
+              <tr className='text-center'>
+                <th> ID reservation</th>
+                <th>Client ID</th>
+                <th>Reservation Date</th>
+                <th>Check-In Date</th>
+                <th>Check-Out Date</th>
+                <th>Number of Nights</th>
+                <th>Room Assigned</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
           <tbody>
             {filteredReservations.map((reservation) => (
               <tr className='text-center' key={reservation.id}>
@@ -317,18 +328,15 @@ const Clients = () => {
                     <Button variant="link" onClick={() => deleteReservation(reservation.id)} title="Delete">
                       <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
                     </Button>
-                    <Button variant="link" onClick={() => handleRegisterPayment(reservation)} title="Register Payment">
-                      <CIcon icon={cilMoney} style={{ fontSize: '1.5rem', color: 'green' }} />
-                    </Button>
-                    <Button variant="link" onClick={() => handleGenerateInvoice(reservation)} title="Generate Invoice">
-                      <CIcon icon={cilFile} style={{ fontSize: '1.5rem', color: 'purple' }} />
-                    </Button>
+                    
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
+        </div>
+        
       </div>
       
       <ReservationForm show={showReservationForm} handleClose={handleCloseReservationForm} addReservation={addReservation} updateReservation={updateReservation} reservation={editReservation} />

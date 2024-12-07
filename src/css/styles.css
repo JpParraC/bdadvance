@@ -104,3 +104,149 @@ text-transform: uppercase;
 .room-container {
 margin-top: 30px;
 }
+/* Estilo general para las tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* Usar table-layout auto para permitir que el contenido se ajuste según el tamaño */
+  margin: 0 auto;
+   /* Centra la tabla */
+}
+
+/* Estilo para las celdas de contenido */
+table td {
+  background-color: #ffffff;
+  color: rgb(0, 13, 75);
+  word-wrap: break-word; /* Permite que las palabras largas se rompan */
+}
+
+/* Estilo para las filas alternas (para mejorar la legibilidad) */
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+
+
+/* Estilo para el contenedor de la tabla con scroll */
+.table-responsive {
+
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #022853 #d4e6ff !important;
+}
+/* Estilo para la tabla personalizada */
+.custom-table {
+  width: 100%;
+  overflow-x: auto;
+ 
+}
+
+/* Estilo para las cabeceras y celdas de la tabla personalizada */
+.custom-table th, .custom-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #02285365; /* Línea divisoria debajo de las celdas */
+}
+
+.custom-table th {
+  background-color: #b4d3ff; /* Fondo de los encabezados */
+  color: rgb(0, 13, 75); /* Color de texto en los encabezados */
+}
+
+/* Eliminar la línea divisoria de la última fila */
+.custom-table tr:last-child td, 
+.custom-table tr:last-child th {
+  border-bottom: none;
+}
+
+/* Estilo para el buscador */
+.search-input {
+  margin-left: 10px;
+  padding: 6px 40px !important;
+  border-radius: 5px;
+  border: none;
+  background-color: #022853;
+  color: #333;
+  font-size: 1rem;
+  width: 200px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  background-color: #b4d3ff;
+  color: black;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: white;
+}
+
+.search-input::-webkit-outer-spin-button,
+.search-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Estilo para los botones personalizados */
+.button-blue {
+  background-color: #022853;
+  padding: 6px 40px !important;
+  margin-top: -4px;
+  border: none;
+}
+
+.button-blue:hover {
+  background-color: #b4d3ff;
+  color: #022853;
+}
+
+.bl {
+  color: #022853;
+}
+
+
+/* Para pantallas pequeñas (móviles) */
+@media (max-width: 767px) {
+  /* Ajustes para la tabla */
+  .custom-table th, .custom-table td {
+    font-size: 0.9rem; /* Reduce el tamaño de la fuente */
+    padding: 6px; /* Reduce el relleno */
+  }
+
+  .search-input {
+    width: 100%; /* Se asegura de que el buscador ocupe todo el ancho */
+    max-width: none; /* Elimina el máximo ancho */
+    font-size: 0.9rem; /* Ajusta el tamaño del texto */
+  }
+
+  .button-blue {
+    width: 100%; /* Botones ocupan todo el ancho en pantallas pequeñas */
+    padding: 10px; /* Relleno más grande para mejorar la accesibilidad */
+    font-size: 1rem;
+  }
+
+  .table-responsive {
+    padding: 0.5rem; /* Menos espacio alrededor de la tabla */
+  }
+}
+
+/* Para pantallas medianas (tabletas) */
+@media (max-width: 1024px) {
+  /* Ajustes de tamaño de fuente para dispositivos medianos */
+  .custom-table th, .custom-table td {
+    font-size: 0.95rem;
+  }
+
+  .search-input {
+    font-size: 0.95rem;
+  }
+
+  .button-blue {
+    padding: 8px 30px; /* Ajusta el tamaño del botón */
+  }
+}
+
+.hh{
+  white-space: nowrap;
+}

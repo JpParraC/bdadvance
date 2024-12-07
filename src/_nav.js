@@ -11,6 +11,7 @@ import {
   cilDescription,
   cilDrop,
   cilGroup,
+  cilMoney,
   cilNotes,
   cilPencil,
   cilPeople,
@@ -49,6 +50,13 @@ const _nav = [
     name: 'Clients', // Nombre que aparecerá en el menú
     to: '/clients', // Ruta hacia la pantalla de clientes
     icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+   
+  },
+  {
+    component: CNavItem,
+    name: 'Invoice & Pay', // Nombre que aparecerá en el menú
+    to: '/invoice', // Ruta hacia la pantalla de clientes
+    icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
    
   },
   {

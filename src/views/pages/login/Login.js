@@ -24,23 +24,21 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  // Función para establecer siempre el tema claro al cargar el componente
+  
   useEffect(() => {
-    // Forzar el tema claro
-    localStorage.setItem('theme', 'light'); // Establecer el tema en el localStorage
-    document.body.classList.remove('dark-theme'); // Remover clase de tema oscuro
-    document.body.classList.add('light-theme'); // Añadir clase de tema claro
+    localStorage.setItem('theme', 'light'); 
+    document.body.classList.remove('dark-theme'); 
+    document.body.classList.add('light-theme'); 
   }, []);
 
-  // Función para manejar el login
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Realizar petición para obtener admins
+     
       const response = await axios.get('http://localhost:3001/admins');
       const admins = response.data;
 
-      // Buscar el admin con el username y password ingresados
+     
       const user = admins.find(
         (admin) => admin.username === username && admin.password === password
       );

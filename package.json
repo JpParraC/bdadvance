@@ -45,6 +45,7 @@
     "react-router-dom": "^6.26.2",
     "redux": "5.0.1",
     "simplebar-react": "^3.2.6",
+    "styled-components": "^6.1.13",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
