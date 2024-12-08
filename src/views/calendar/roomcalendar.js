@@ -4,7 +4,7 @@ import { CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDoorOpen } from '@fortawesome/free-solid-svg-icons'; 
 import 'react-calendar/dist/Calendar.css';
-import '../../css/styles.css';// Asegúrate de crear este archivo CSS
+import '../../css/styles.css'; // Asegúrate de crear este archivo CSS
 
 // URL de la API
 const API_URL = "http://localhost:3001";
@@ -37,11 +37,10 @@ const RoomCalendar = () => {
       const checkoutDate = new Date(reservation.dateCheckout);
       const currentDate = new Date(selectedDate);
 
-      return (
-        reservation.roomAssigned === roomId &&
+      // Check if any of the rooms in the reservation includes this room
+      return reservation.rooms.some((room) => room.roomAssigned === roomId) &&
         currentDate >= checkinDate && 
-        currentDate < checkoutDate
-      );
+        currentDate < checkoutDate;
     });
   };
 

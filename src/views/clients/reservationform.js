@@ -5,34 +5,25 @@ import axios from 'axios';
 const ReservationForm = ({ show, handleClose, addReservation, updateReservation, reservation }) => {
   const [rooms, setRooms] = useState([]); // State for rooms
   const [roomTypes, setRoomTypes] = useState([]); // State for room types
-  const [equipments, setEquipments] = useState([]); // State for equipment
   const [reservations, setReservations] = useState([]); // State for existing reservations
   const [formData, setFormData] = useState({
     dateReserve: '',
     dateCheckin: '',
     dateCheckout: '',
     numberNights: '',
-    roomAssigned: '', // This field is removed
   });
-
-  const [roomType, setRoomType] = useState('');
-  const [filteredRooms, setFilteredRooms] = useState([]); // State for filtered rooms
-  const [roomsNotAvailable, setRoomsNotAvailable] = useState(false); // State to track if rooms are available
+  const [roomBlocks, setRoomBlocks] = useState([]); // State for room blocks
+  const [filteredRooms, setFilteredRooms] = useState([]); // Array of filtered rooms for each block
 
   useEffect(() => {
-    // Function to fetch data from the database (JSON) using axios
     const fetchData = async () => {
       try {
-        // Requests to get room data, room types, equipment, and existing reservations
-        const roomsResponse = await axios.get('http://localhost:3001/rooms'); // URL to fetch rooms
-        const roomTypesResponse = await axios.get('http://localhost:3001/room_types'); // URL to fetch room types
-        const equipmentsResponse = await axios.get('http://localhost:3001/room_equipment'); // URL to fetch equipment
-        const reservationsResponse = await axios.get('http://localhost:3001/reservations'); // URL to fetch existing reservations
-        
-        // Set the state with the fetched data
+        const roomsResponse = await axios.get('http://localhost:3001/rooms');
+        const roomTypesResponse = await axios.get('http://localhost:3001/room_types');
+        const reservationsResponse = await axios.get('http://localhost:3001/reservations');
+
         setRooms(roomsResponse.data);
         setRoomTypes(roomTypesResponse.data);
-        setEquipments(equipmentsResponse.data);
         setReservations(reservationsResponse.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -40,91 +31,114 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
     };
 
     fetchData();
-  }, []); // Runs only once when the component mounts
+  }, []);
 
+  // Reset form data when modal is closed or when new reservation is added
   useEffect(() => {
-    if (reservation) {
+    if (!show) { // Reset when modal is closed
+      setFormData({
+        dateReserve: '',
+        dateCheckin: '',
+        dateCheckout: '',
+        numberNights: '',
+      });
+      setRoomBlocks([]);
+      setFilteredRooms([]);
+    } else if (reservation) {
+      // Set form data if we are editing an existing reservation
       setFormData({
         dateReserve: reservation.dateReserve,
         dateCheckin: reservation.dateCheckin,
         dateCheckout: reservation.dateCheckout,
         numberNights: reservation.numberNights,
       });
-      setRoomType(reservation.roomType || ''); // Set the room type if we are editing a reservation
+      setRoomBlocks(reservation.rooms || [{ roomType: '', roomAssigned: '' }]);
     }
-  }, [reservation]);
-
-  useEffect(() => {
-    // Filter rooms by the selected room type
-    if (roomType) {
-      const availableRooms = rooms.filter(room => room.status === "available" && room.typeId === roomType);
-      setFilteredRooms(availableRooms); // Update filtered rooms based on room type
-    } else {
-      setFilteredRooms([]); // Reset when no room type is selected
-    }
-  }, [roomType, rooms]);
-
-  useEffect(() => {
-    // Filter out rooms that are already booked in the selected dates
-    if (formData.dateCheckin && formData.dateCheckout && roomType) {
-      const unavailableRooms = reservations.filter(reservation => {
-        const checkin = new Date(reservation.dateCheckin);
-        const checkout = new Date(reservation.dateCheckout);
-        const selectedCheckin = new Date(formData.dateCheckin);
-        const selectedCheckout = new Date(formData.dateCheckout);
-
-        // Check for overlapping dates
-        return (selectedCheckin < checkout && selectedCheckout > checkin);
-      }).map(reservation => reservation.roomAssigned);
-
-      const availableRooms = rooms.filter(room => 
-        room.status === "available" && 
-        room.typeId === roomType && 
-        !unavailableRooms.includes(room.id)
-      );
-
-      setFilteredRooms(availableRooms); // Set available rooms excluding booked ones
-
-      // Set roomsNotAvailable to true if no rooms are available
-      setRoomsNotAvailable(availableRooms.length === 0);
-    }
-  }, [formData.dateCheckin, formData.dateCheckout, roomType, reservations, rooms]);
+  }, [show, reservation]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    // Automatically calculate the number of nights when check-in or check-out dates change
     if (name === 'dateCheckin' || name === 'dateCheckout') {
       calculateNumberOfNights(value, name);
     }
   };
 
-  // Function to calculate the number of nights based on check-in and check-out dates
   const calculateNumberOfNights = (changedDate, changedField) => {
     const checkinDate = changedField === 'dateCheckin' ? new Date(changedDate) : new Date(formData.dateCheckin);
     const checkoutDate = changedField === 'dateCheckout' ? new Date(changedDate) : new Date(formData.dateCheckout);
 
     if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
       const diffTime = checkoutDate - checkinDate;
-      const diffDays = diffTime / (1000 * 3600 * 24); // Convert time difference to days
+      const diffDays = diffTime / (1000 * 3600 * 24);
       setFormData((prevState) => ({
         ...prevState,
-        numberNights: diffDays, // Set the calculated number of nights
+        numberNights: diffDays,
       }));
     }
   };
 
+  const handleRoomTypeChange = (index, roomType) => {
+    const newRoomBlocks = roomBlocks.map((block, idx) =>
+      idx === index ? { ...block, roomType, roomAssigned: '' } : block
+    );
+    setRoomBlocks(newRoomBlocks);
+
+    if (formData.dateCheckin && formData.dateCheckout && roomType) {
+      const unavailableRooms = reservations
+        .filter((res) => {
+          const checkin = new Date(res.dateCheckin);
+          const checkout = new Date(res.dateCheckout);
+          const selectedCheckin = new Date(formData.dateCheckin);
+          const selectedCheckout = new Date(formData.dateCheckout);
+
+          return selectedCheckin < checkout && selectedCheckout > checkin;
+        })
+        .flatMap((res) => res.rooms.map((room) => room.roomAssigned));
+
+      const availableRooms = rooms.filter(
+        (room) =>
+          room.typeId === roomType &&
+          room.status === 'available' &&
+          !unavailableRooms.includes(room.id)
+      );
+
+      const newFilteredRooms = [...filteredRooms];
+      newFilteredRooms[index] = availableRooms;
+      setFilteredRooms(newFilteredRooms);
+    }
+  };
+
+  const handleRoomChange = (index, roomAssigned) => {
+    const newRoomBlocks = roomBlocks.map((block, idx) =>
+      idx === index ? { ...block, roomAssigned } : block
+    );
+    setRoomBlocks(newRoomBlocks);
+  };
+
+  const handleAddRoom = () => {
+    setRoomBlocks([...roomBlocks, { roomType: '', roomAssigned: '' }]);
+    setFilteredRooms([...filteredRooms, []]); // Add a new empty array for the new block
+  };
+
+  const handleRemoveRoom = (index) => {
+    const newRoomBlocks = roomBlocks.filter((_, idx) => idx !== index);
+    const newFilteredRooms = filteredRooms.filter((_, idx) => idx !== index);
+    setRoomBlocks(newRoomBlocks);
+    setFilteredRooms(newFilteredRooms);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const reservationData = { ...formData, roomType }; // Include room type in the data
+    const reservationData = { ...formData, rooms: roomBlocks };
 
     if (reservation) {
       updateReservation({ ...reservation, ...reservationData });
     } else {
-      addReservation(reservationData);
+      addReservation(reservationData); // Reset the form after adding
+      handleClose(); // Close the modal
     }
-    handleClose(); // Close the modal after submitting the form
   };
 
   return (
@@ -178,61 +192,54 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
               name="numberNights"
               className="form-control"
               value={formData.numberNights}
-              onChange={handleChange}
-              required
-              min="1"
-              disabled
+              readOnly
             />
           </div>
-
-          {/* Room type selection */}
           <div className="mb-3">
-            <label htmlFor="roomType" className="form-label">Room Type</label>
-            <select
-              id="roomType"
-              name="roomType"
-              className="form-control"
-              value={roomType}
-              onChange={(e) => setRoomType(e.target.value)}
-              required
-            >
-              <option value="">Select Room Type</option>
-              {roomTypes.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.type} - {type.capacity} people - {type.price} $/night
-                  <br />
-                  Bed: {type.type_bed} - Size: {type.size} - Floor: {type.hotel_floor}
-                </option>
-              ))}
-            </select>
+            <label className="form-label">Rooms</label>
+            {roomBlocks.map((block, index) => (
+              <div key={index} className="mb-2 d-flex align-items-center">
+                <select
+                  className="form-control me-2"
+                  value={block.roomType}
+                  onChange={(e) => handleRoomTypeChange(index, e.target.value)}
+                  required
+                >
+                  <option value="">Select Room Type</option>
+                  {roomTypes.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.type}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className="form-control me-2"
+                  value={block.roomAssigned}
+                  onChange={(e) => handleRoomChange(index, e.target.value)}
+                  required
+                  disabled={!block.roomType}
+                >
+                  <option value="">Select Room</option>
+                  {filteredRooms[index]?.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.id}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleRemoveRoom(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button type="button" className="btn btn-primary mt-2" onClick={handleAddRoom}>
+              Add Room
+            </button>
           </div>
-
-          {/* Show available rooms based on selected room type */}
-          {roomType && !roomsNotAvailable && (
-            <div className="mb-3">
-              <label htmlFor="roomAssigned" className="form-label">Select Available Room</label>
-              <select
-                id="roomAssigned"
-                name="roomAssigned"
-                className="form-control"
-                value={formData.roomAssigned}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Room</option>
-                {filteredRooms.map((room) => (
-                  <option key={room.id} value={room.id}>
-                    {room.id} - {room.equipment.join(', ')} {/* Show the list of equipment as context */}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Show message if no rooms are available */}
-          {roomsNotAvailable && <div className="text-danger">Rooms not available for the selected dates.</div>}
-
-          <Button type="submit" variant="primary" disabled={roomsNotAvailable}>
+          <Button type="submit" variant="primary">
             {reservation ? 'Update Reservation' : 'Add Reservation'}
           </Button>
         </form>

@@ -53,162 +53,239 @@
       "dateCheckin": "2024-11-15",
       "dateCheckout": "2024-11-21",
       "numberNights": 6,
-      "roomAssigned": "ROOM009",
-      "roomType": "TYPE001",
+      "rooms": [
+        {
+          "roomAssigned": "ROOM009",
+          "roomType": "TYPE001"
+        },
+        {
+          "roomAssigned": "ROOM010",
+          "roomType": "TYPE002"
+        }
+      ],
       "clientId": "28061677"
     },
     {
-      "id": "53a2",
-      "dateReserve": "2024-11-12",
-      "dateCheckin": "2024-11-22",
-      "dateCheckout": "2024-11-24",
-      "numberNights": 2,
-      "roomAssigned": "ROOM001",
-      "roomType": "TYPE001",
+      "id": "0dda",
+      "dateReserve": "2024-12-07",
+      "dateCheckin": "2024-12-07",
+      "dateCheckout": "2024-12-13",
+      "numberNights": 6,
+      "rooms": [
+        {
+          "roomType": "TYPE001",
+          "roomAssigned": "ROOM002"
+        },
+        {
+          "roomType": "TYPE002",
+          "roomAssigned": "ROOM006"
+        }
+      ],
+      "clientId": "28061677"
+    },
+    {
+      "id": "47fb",
+      "dateReserve": "2024-12-07",
+      "dateCheckin": "2024-12-07",
+      "dateCheckout": "2024-12-16",
+      "numberNights": 9,
+      "rooms": [
+        {
+          "roomType": "TYPE003",
+          "roomAssigned": "ROOM003"
+        },
+        {
+          "roomType": "TYPE001",
+          "roomAssigned": "ROOM001"
+        }
+      ],
       "clientId": "30056463"
     },
     {
-      "id": "0f6a",
-      "dateReserve": "2024-11-13",
-      "dateCheckin": "2024-11-15",
-      "dateCheckout": "2024-11-17",
+      "id": "d1f6",
+      "dateReserve": "2024-12-07",
+      "dateCheckin": "2024-12-07",
+      "dateCheckout": "2024-12-09",
       "numberNights": 2,
-      "roomAssigned": "ROOM003",
-      "roomType": "TYPE003",
-      "clientId": "28061677"
-    },
-    {
-      "id": "ca70",
-      "dateReserve": "2024-11-14",
-      "dateCheckin": "2024-11-14",
-      "dateCheckout": "2024-11-17",
-      "numberNights": 3,
-      "roomAssigned": "ROOM005",
-      "roomType": "TYPE001",
-      "clientId": "28061677"
-    },
-    {
-      "id": "4eb9",
-      "dateReserve": "2024-11-14",
-      "dateCheckin": "2024-11-14",
-      "dateCheckout": "2024-11-17",
-      "numberNights": 3,
-      "roomAssigned": "ROOM005",
-      "roomType": "TYPE001",
-      "clientId": "28061677"
-    },
-    {
-      "id": "3d09",
-      "dateReserve": "2024-11-17",
-      "dateCheckin": "2024-11-21",
-      "dateCheckout": "2024-11-29",
-      "numberNights": 8,
-      "roomAssigned": "ROOM003",
-      "roomType": "TYPE003",
+      "rooms": [
+        {
+          "roomType": "TYPE003",
+          "roomAssigned": "ROOM008"
+        },
+        {
+          "roomType": "TYPE001",
+          "roomAssigned": "ROOM005"
+        }
+      ],
       "clientId": "30818050"
     }
   ],
   "payments": [
     {
-      "id": "PAY1000",
-      "dateInvoice": "2024-11-10",
-      "amount": 300,
-      "id_reservation": "37d2",
-      "idClient": "30056463",
-      "notes": "First payment",
-      "time": "14:00",
-      "paymentMethod": "Credit Card"
-    },
-    {
-      "id": "PAY1001",
-      "dateInvoice": "2024-11-11",
-      "amount": 201,
-      "id_reservation": "37d2",
-      "idClient": "30056463",
-      "notes": "Second payment",
-      "time": "15:00",
-      "paymentMethod": "Cash"
-    },
-    {
-      "id": "PAY4811",
-      "dateInvoice": "2024-11-03",
-      "total_amount": 22,
-      "id_reservation": "37d2",
-      "idClient": "30056463",
-      "notes": "notas",
-      "time": "00:10",
-      "paymentMethod": "Cash"
-    },
-    {
-      "id": "PAY5580",
-      "dateInvoice": "2024-11-03",
-      "total_amount": 22,
-      "id_reservation": "37d2",
-      "notes": "",
-      "time": "00:20",
-      "paymentMethod": "Credit"
-    },
-    {
-      "id": "PAY4368",
-      "dateInvoice": "2024-11-04",
-      "total_amount": 200,
-      "id_reservation": "37d2",
-      "idClient": "30056463",
-      "notes": "hola",
-      "time": "00:22",
-      "paymentMethod": "Cash"
-    },
-    {
-      "id": "PAY3912",
-      "dateInvoice": "2024-11-03",
-      "total_amount": 2000,
-      "id_reservation": "8b16",
-      "idClient": "30056463",
-      "notes": "pago de restaurant",
-      "time": "00:25",
-      "paymentMethod": "Credit Card"
-    },
-    {
-      "id": "PAY2512",
-      "dateInvoice": "2024-11-03",
-      "total_amount": 23,
-      "id_reservation": "37d2",
-      "idClient": "30056463",
-      "notes": "aaa",
-      "time": "00:35",
-      "paymentMethod": "Cash"
-    },
-    {
-      "id": "PAY2902",
+      "id": "PAY3544",
       "dateInvoice": "2024-12-07",
-      "amount": 11,
-      "id_reservation": 1,
+      "amount": 101,
+      "id_reservation": "a058",
+      "idClient": "28061677",
+      "notes": "pay reservation",
+      "time": "18:10",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY3357",
+      "dateInvoice": "2024-12-07",
+      "amount": 100,
+      "id_reservation": "a058",
+      "idClient": "28061677",
+      "notes": "pay restaurant",
+      "time": "18:13",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "f112",
+      "dateInvoice": "2024-12-07",
+      "amount": 100,
+      "id_reservation": "53a2",
+      "idClient": "30056463",
+      "notes": "hola mi amor",
+      "time": "19:51",
+      "paymentMethod": "credit"
+    },
+    {
+      "id": "PAY8774",
+      "dateInvoice": "2024-12-07",
+      "amount": 10,
+      "id_reservation": "53a2",
       "idClient": "",
-      "notes": "asda",
-      "time": "03:17",
+      "notes": "pay restaurant",
+      "time": "23:33",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY4193",
+      "dateInvoice": "2024-12-07",
+      "amount": 10,
+      "id_reservation": "53a2",
+      "idClient": "",
+      "notes": "pay restaurant",
+      "time": "23:33",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY7704",
+      "dateInvoice": "2024-12-07",
+      "amount": 10,
+      "id_reservation": "53a2",
+      "idClient": "",
+      "notes": "pay restaurant",
+      "time": "23:33",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY2810",
+      "dateInvoice": "2024-12-07",
+      "amount": 10,
+      "id_reservation": "53a2",
+      "idClient": "",
+      "notes": "pay restaurant",
+      "time": "23:33",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY5360",
+      "dateInvoice": "2024-12-07",
+      "amount": 1212,
+      "id_reservation": "53a2",
+      "idClient": "",
+      "notes": "notas",
+      "time": "22:41",
       "paymentMethod": "Credit Card"
     },
     {
-      "id": "PAY8593",
+      "id": "PAY7516",
       "dateInvoice": "2024-12-07",
       "amount": 12,
-      "id_reservation": 1,
-      "idClient": "",
-      "notes": "a",
-      "time": "02:18",
+      "id_reservation": "0f6a",
+      "idClient": "28061677",
+      "notes": "pay reservation",
+      "time": "22:44",
+      "paymentMethod": "Credit Card"
+    },
+    {
+      "id": "PAY3403",
+      "dateInvoice": "2024-12-07",
+      "amount": 23,
+      "id_reservation": "0f6a",
+      "idClient": "28061677",
+      "notes": "pay restaurant",
+      "time": "22:45",
+      "paymentMethod": "Cash"
+    },
+    {
+      "id": "PAY1304",
+      "dateInvoice": "2024-12-07",
+      "amount": 1,
+      "id_reservation": "0f6a",
+      "idClient": "28061677",
+      "notes": "propina",
+      "time": "22:47",
+      "paymentMethod": "Credit Card"
+    },
+    {
+      "id": "PAY1838",
+      "dateInvoice": "2024-12-08",
+      "amount": 200,
+      "id_reservation": "d1f6",
+      "idClient": "30818050",
+      "notes": "pay reservation",
+      "time": "00:52",
       "paymentMethod": "Credit Card"
     }
   ],
   "invoices": [
     {
-      "id": "1",
-      "reservationId": 1,
-      "totalAmount": 500,
-      "date": "2024-11-10",
-      "clientId": null,
+      "id": "INV2449",
+      "reservationId": "a058",
+      "totalAmount": 32,
+      "date": "2024-12-07",
+      "clientId": "28061677",
       "paymentIds": [
-        "PAY4811",
-        "PAY1001"
+        "PAY3544",
+        "PAY3357"
+      ]
+    },
+    {
+      "id": "INV6259",
+      "reservationId": "0f6a",
+      "totalAmount": 36,
+      "date": "2024-12-07",
+      "clientId": "28061677",
+      "paymentIds": [
+        "PAY7516",
+        "PAY3403",
+        "PAY1304"
+      ]
+    },
+    {
+      "id": "INV1339",
+      "reservationId": "d1f6",
+      "totalAmount": 800,
+      "date": "2024-12-08",
+      "clientId": "30818050",
+      "roomDetails": [
+        {
+          "price": 300,
+          "nights": 2,
+          "total": 600
+        },
+        {
+          "price": 100,
+          "nights": 2,
+          "total": 200
+        }
+      ],
+      "paymentIds": [
+        "PAY1838"
       ]
     }
   ],

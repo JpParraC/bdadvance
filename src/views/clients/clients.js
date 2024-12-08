@@ -319,7 +319,11 @@ const Clients = () => {
                 <td>{reservation.dateCheckin}</td>
                 <td>{reservation.dateCheckout}</td>
                 <td>{reservation.numberNights}</td>
-                <td>{reservation.roomAssigned}</td>
+                <td>
+                  {reservation.rooms
+                    .map((room) => `${room.roomType} (${room.roomAssigned})`)
+                    .join(', ')}
+                </td>
                 <td>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <Button variant="link" onClick={() => { setEditReservation(reservation); setShowReservationForm(true); }} title="Edit">
