@@ -297,14 +297,9 @@
       "firstName": "Carloss",
       "lastName": "Rodriguezz",
       "email": "carlos.admin@example.com",
-      "password": "hashed_password_1",
+      "password": "123",
       "phoneNumber": "04129998877",
-      "role": "superadmin",
-      "permissions": [
-        "manage_clients",
-        "manage_reservations",
-        "manage_payments"
-      ]
+      "role": "superadmin"
     },
     {
       "id": "2",
@@ -316,6 +311,17 @@
       "password": "123",
       "phoneNumber": "121212",
       "role": "reader"
+    },
+    {
+      "id": "3",
+      "cedula": "12345678",
+      "username": "receptionist",
+      "firstName": "Maria",
+      "lastName": "Perez",
+      "email": "maria.perez@example.com",
+      "password": "hashed_password_3",
+      "phoneNumber": "04125558877",
+      "role": "receptionist"
     }
   ],
   "room_equipment": [

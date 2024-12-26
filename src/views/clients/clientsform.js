@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, Modal } from 'react-bootstrap';
 
 const ClientsForm = ({ show, handleClose, handleSave, client }) => {
-  const [id, setId] = useState('');
+  const [idGuest, setIdGuest] = useState('');
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -14,23 +14,22 @@ const ClientsForm = ({ show, handleClose, handleSave, client }) => {
 
   useEffect(() => {
     if (client) {
-      setId(client.id);
-      setFirstName(client.firstName);
-      setMiddleName(client.middleName);
-      setLastName(client.lastName);
-      setEmail(client.email);
-      setDateOfBirth(client.dateOfBirth);
-      setPhoneNumber(client.phoneNumber);
-      setNumberPersons(client.numberPersons);
-      setNationality(client.nationality);
+      setIdGuest(client.id_guest || ''); // Aseguramos un valor predeterminado
+      setFirstName(client.first_name || '');
+      setMiddleName(client.middle_name || '');
+      setLastName(client.first_lastname || '');
+      setEmail(client.email || '');
+      setDateOfBirth(client.date_ofbirth || '');
+      setPhoneNumber(client.phone_number || '');
+      setNumberPersons(client.number_persons || '');
+      setNationality(client.nationality || '');
     } else {
-      // Reset fields if no client is selected
       resetForm();
     }
   }, [client]);
 
   const resetForm = () => {
-    setId('');
+    setIdGuest('');
     setFirstName('');
     setMiddleName('');
     setLastName('');
@@ -44,17 +43,17 @@ const ClientsForm = ({ show, handleClose, handleSave, client }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleSave({
-      id,
-      firstName,
-      middleName,
-      lastName,
+      id_guest: idGuest,
+      first_name: firstName,
+      first_lastname: lastName,
+      middle_name: middleName,
       email,
-      dateOfBirth,
-      phoneNumber,
-      numberPersons,
-      nationality
+      date_ofbirth: dateOfBirth,
+      phone_number: phoneNumber,
+      number_persons: numberPersons,
+      nationality,
     });
-    resetForm(); // Reset form fields after submission
+    resetForm();
     handleClose();
   };
 
@@ -65,15 +64,15 @@ const ClientsForm = ({ show, handleClose, handleSave, client }) => {
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="formId">
-            <Form.Label>ID</Form.Label>
+          <Form.Group controlId="formIdGuest">
+            <Form.Label>ID Guest</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter ID"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
+              placeholder="Enter ID Guest"
+              value={idGuest}
+              onChange={(e) => setIdGuest(e.target.value)}
               required
-              readOnly={!!client} // Make ID read-only if editing
+              readOnly={!!client} // Hacer ID Guest solo lectura al editar
             />
           </Form.Group>
           <Form.Group controlId="formFirstName">

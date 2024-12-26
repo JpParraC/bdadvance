@@ -37,6 +37,7 @@ const Login = () => {
      
       const response = await axios.get('http://localhost:3001/admins');
       const admins = response.data;
+      console.log(admins);
 
      
       const user = admins.find(

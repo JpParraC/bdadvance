@@ -26,13 +26,30 @@ const Clients = () => {
 
   const fetchClients = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/clients');
-      setClients(response.data);
+      const response = await axios.get('http://localhost:5000/api/users/');
+      const clientsData = response.data;
+  
+      // Mapeamos los datos para convertirlos a camelCase
+      const formattedClients = clientsData.map(client => ({
+        id: client.id,
+        firstName: client.first_name,  // Convertir snake_case a camelCase
+        middleName: client.middle_name,
+        lastName: client.first_lastname,
+        email: client.email,
+        dateOfBirth: client.date_ofbirth,
+        phoneNumber: client.phone_number,
+        numberPersons: client.number_persons,
+        nationality: client.nationality
+      }));
+  
+      // Establecer el estado con los datos convertidos
+      setClients(formattedClients);
     } catch (error) {
       console.error("Error loading clients:", error);
       alert("An error occurred while fetching clients.");
     }
   };
+  
   
   const fetchReservations = async () => {
     try {
@@ -82,7 +99,7 @@ const Clients = () => {
   
   const addClient = async (newClient) => {
     try {
-      const response = await axios.post('http://localhost:3001/clients', newClient);
+      const response = await axios.post('http://localhost:5000/api/users/', newClient);
       setClients([...clients, response.data]);
       setShowForm(false);
     } catch (error) {
@@ -93,7 +110,7 @@ const Clients = () => {
   
   const updateClient = async (updatedClient) => {
     try {
-      const response = await axios.put(`http://localhost:3001/clients/${updatedClient.id}`, updatedClient);
+      const response = await axios.put(`http://localhost:5000/api/users/${updatedClient.id}`, updatedClient);
       const updatedClients = clients.map(client => 
         client.id === updatedClient.id ? response.data : client
       );
@@ -230,36 +247,39 @@ const Clients = () => {
           <tbody>
             {filteredClients.map((client) => (
               <tr className='text-center' key={client.id}>
-                <td>{client.id}</td>
-                <td>{client.firstName}</td>
-                <td>{client.middleName}</td>
-                <td>{client.lastName}</td>
-                <td>{client.email}</td>
-                <td>{client.dateOfBirth}</td>
-                <td>{client.phoneNumber}</td>
-                <td>{client.numberPersons}</td>
-                <td>{client.nationality}</td>
-                <td>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <Button variant="link" onClick={() => { setEditClient(client); setShowForm(true); }} title="Edit">
-                      <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
-                    </Button>
-                    <Button variant="link" onClick={() => deleteClient(client.id)} title="Delete">
-                      <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
-                    </Button>
-                    <Button variant="link" onClick={() => handleOpenReservationForm(client)} title="Check-In and Add Reservation">
-                      <CIcon icon={cilCalendar} style={{ fontSize: '1.5rem', color: 'blue' }} />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
+              <td>{client.id}</td>
+              <td>{client.firstName}</td>
+              <td>{client.middleName}</td>
+              <td>{client.lastName}</td>
+              <td>{client.email}</td>
+              <td>{client.dateOfBirth}</td>
+              <td>{client.phoneNumber}</td>
+              <td>{client.numberPersons}</td>
+              <td>{client.nationality}</td>
+              <td>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <Button variant="link" onClick={() => { setEditClient(client); setShowForm(true); }} title="Edit">
+                    <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
+                  </Button>
+                  <Button variant="link" onClick={() => deleteClient(client.id)} title="Delete">
+                    <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
+                  </Button>
+                  <Button variant="link" onClick={() => handleOpenReservationForm(client)} title="Check-In and Add Reservation">
+                    <CIcon icon={cilCalendar} style={{ fontSize: '1.5rem', color: 'blue' }} />
+                  </Button>
+                </div>
+              </td>
+            </tr>
+            
             ))}
           </tbody>
         </Table>
         </div>
        
       </div>
+      
       <ClientsForm
+      
         show={showForm}
         handleClose={handleCloseForm}
         client={editClient}

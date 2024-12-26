@@ -25,7 +25,7 @@ const AppSidebar = () => {
   return (
     <CSidebar
       className="border-end"
-      colorScheme="licht" // Forzar el modo claro (light)
+      colorScheme="light" // Forzar el modo claro (light)
       style={{ backgroundColor: '#b4d3ff' }} // Fondo claro opcional
       position="fixed"
       unfoldable={unfoldable}

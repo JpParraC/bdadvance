@@ -1,29 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCol,
-  CForm,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
-  CRow,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow
-} from '@coreui/react';
+import { CButton, CCard, CCardBody, CCardHeader, CCol, CForm, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilPen, cilTrash } from '@coreui/icons';
+import { hasPermission } from '../../../permissions'; // Importa la función de permisos
+import { useAuth } from '../../../contexts/authcontext'; // Importa el contexto de autenticación
 import '../../css/styles.css';
 
 const AddManageAdmins = () => {
+  const { user } = useAuth();  // Obtener los datos del usuario desde el contexto
   const [admins, setAdmins] = useState([]);
   const [newAdmin, setNewAdmin] = useState({
     username: '',
@@ -35,12 +19,12 @@ const AddManageAdmins = () => {
     role: 'admin',
   });
 
-  const [editAdmin, setEditAdmin] = useState(null); // Estado para manejar la edición
+  const [editAdmin, setEditAdmin] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [addModalVisible, setAddModalVisible] = useState(false); // Nuevo estado para manejar el modal de agregar
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false); // Estado para la confirmación de eliminar
-  const [adminToDelete, setAdminToDelete] = useState(null); // Administrador a eliminar
-  const [editConfirmationModalVisible, setEditConfirmationModalVisible] = useState(false); // Modal de confirmación de edición
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [adminToDelete, setAdminToDelete] = useState(null);
+  const [editConfirmationModalVisible, setEditConfirmationModalVisible] = useState(false);
 
   useEffect(() => {
     fetch('http://localhost:3001/admins')
@@ -74,19 +58,18 @@ const AddManageAdmins = () => {
           phoneNumber: '',
           role: 'admin',
         });
-        setAddModalVisible(false); // Cerrar el modal después de agregar el admin
+        setAddModalVisible(false);
       })
       .catch(error => console.error('Error adding admin:', error));
   };
 
   const handleEditAdmin = (id) => {
     const adminToEdit = admins.find(admin => admin.id === id);
-    setEditAdmin({ ...adminToEdit }); // Cargar los datos del administrador seleccionado
-    setEditModalVisible(true); // Mostrar el modal de edición
+    setEditAdmin({ ...adminToEdit });
+    setEditModalVisible(true);
   };
 
   const handleSaveEdit = () => {
-    // Mostrar el modal de confirmación de edición
     setEditConfirmationModalVisible(true);
   };
 
@@ -101,9 +84,9 @@ const AddManageAdmins = () => {
     .then(response => response.json())
     .then(data => {
       setAdmins(admins.map(admin => (admin.id === data.id ? data : admin)));
-      setEditModalVisible(false); // Cerrar el modal de edición
-      setEditConfirmationModalVisible(false); // Cerrar la confirmación
-      setEditAdmin(null); // Resetear el administrador en edición
+      setEditModalVisible(false);
+      setEditConfirmationModalVisible(false);
+      setEditAdmin(null);
     })
     .catch(error => console.error('Error saving admin changes:', error));
   };
@@ -114,9 +97,9 @@ const AddManageAdmins = () => {
     })
     .then(response => {
       if (response.ok) {
-        setAdmins(admins.filter(admin => admin.id !== adminToDelete.id)); // Actualiza el estado local
-        setDeleteModalVisible(false); // Cerrar modal de confirmación
-        setAdminToDelete(null); // Resetear admin a eliminar
+        setAdmins(admins.filter(admin => admin.id !== adminToDelete.id));
+        setDeleteModalVisible(false);
+        setAdminToDelete(null);
       } else {
         console.error('Failed to delete the admin:', response.statusText);
       }
@@ -126,66 +109,68 @@ const AddManageAdmins = () => {
 
   return (
     <div className="container">
-      <h2 className="mb-3 bl  ">Manage Administrators</h2>
+      <h2 className="mb-3">Manage Administrators</h2>
 
       <div className="text-start">
-        <CButton color="success" onClick={() => setAddModalVisible(true)} className="px-4">
-          Add Administrator
-        </CButton>
+        {hasPermission(user, 'manage_admins') && (  // Verifica si el usuario tiene el permiso 'manage_admins'
+          <CButton color="success" onClick={() => setAddModalVisible(true)} className="px-4">
+            Add Administrator
+          </CButton>
+        )}
       </div>
 
       <div className="table-responsive mt-3">
-        <div className='custom-table-container'>
-        <table className="custom-table">
-                <thead>
-                    <tr className="text-center">
-                      <th>ID</th>
-                      <th>Username</th>
-                      <th>First Name</th>
-                      <th>Last Name</th>
-                      <th>Email</th>
-                      <th>Role</th>
-                      <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  {admins.map(admin => (
-                    <tr className="text-center" key={admin.id}>
-                      <td>{admin.id}</td>
-                      <td>{admin.username}</td>
-                      <td>{admin.firstName}</td>
-                      <td>{admin.lastName}</td>
-                      <td>{admin.email}</td>
-                      <td>{admin.role}</td>
-                      <td>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                          <button
-                            className="btn btn-link"
-                            onClick={() => handleEditAdmin(admin.id)}
-                            title="Edit"
-                          >
-                            <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }}/>
-                          </button>
-                          <button
-                            className="btn btn-link"
-                            onClick={() => {
-                              setAdminToDelete(admin);
-                              setDeleteModalVisible(true);
-                            }}
-                            title="Delete"
-                          >
-                          <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }}  />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-          </table>
-
-        </div>
+        <table className="table">
+          <thead>
+            <tr className="text-center">
+              <th>ID</th>
+              <th>Username</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {admins.map(admin => (
+              <tr className="text-center" key={admin.id}>
+                <td>{admin.id}</td>
+                <td>{admin.username}</td>
+                <td>{admin.firstName}</td>
+                <td>{admin.lastName}</td>
+                <td>{admin.email}</td>
+                <td>{admin.role}</td>
+                <td>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                    {hasPermission(user, 'manage_admins') && (  // Verifica si el usuario tiene permiso para editar
+                      <button
+                        className="btn btn-link"
+                        onClick={() => handleEditAdmin(admin.id)}
+                        title="Edit"
+                      >
+                        <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
+                      </button>
+                    )}
+                    {hasPermission(user, 'manage_admins') && (  // Verifica si el usuario tiene permiso para eliminar
+                      <button
+                        className="btn btn-link"
+                        onClick={() => {
+                          setAdminToDelete(admin);
+                          setDeleteModalVisible(true);
+                        }}
+                        title="Delete"
+                      >
+                        <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    
 
       {/* Modal for Adding Administrator */}
       <CModal visible={addModalVisible} onClose={() => setAddModalVisible(false)}>
@@ -258,26 +243,13 @@ const AddManageAdmins = () => {
                 <label htmlFor="role" className="form-label">Role</label>
                 <select
                   name="role"
-                  className="form-control"
+                  className="form-select"
                   onChange={handleInputChange}
                   value={newAdmin.role}
                 >
                   <option value="admin">Admin</option>
                   <option value="user">User</option>
                 </select>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md="12">
-                <label htmlFor="password" className="form-label">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  className="form-control"
-                  placeholder="Password"
-                  onChange={handleInputChange}
-                  value={newAdmin.password}
-                />
               </CCol>
             </CRow>
           </CForm>
@@ -287,7 +259,7 @@ const AddManageAdmins = () => {
             Close
           </CButton>
           <CButton color="primary" onClick={handleAddAdmin}>
-            Save Administrator
+            Add Administrator
           </CButton>
         </CModalFooter>
       </CModal>
@@ -308,7 +280,7 @@ const AddManageAdmins = () => {
                   className="form-control"
                   placeholder="Username"
                   value={editAdmin?.username || ''}
-                  onChange={e => setEditAdmin({ ...editAdmin, username: e.target.value })}
+                  onChange={(e) => setEditAdmin({ ...editAdmin, username: e.target.value })}
                 />
               </CCol>
               <CCol md="6">
@@ -319,7 +291,7 @@ const AddManageAdmins = () => {
                   className="form-control"
                   placeholder="First Name"
                   value={editAdmin?.firstName || ''}
-                  onChange={e => setEditAdmin({ ...editAdmin, firstName: e.target.value })}
+                  onChange={(e) => setEditAdmin({ ...editAdmin, firstName: e.target.value })}
                 />
               </CCol>
             </CRow>
@@ -332,7 +304,7 @@ const AddManageAdmins = () => {
                   className="form-control"
                   placeholder="Last Name"
                   value={editAdmin?.lastName || ''}
-                  onChange={e => setEditAdmin({ ...editAdmin, lastName: e.target.value })}
+                  onChange={(e) => setEditAdmin({ ...editAdmin, lastName: e.target.value })}
                 />
               </CCol>
               <CCol md="6">
@@ -343,7 +315,7 @@ const AddManageAdmins = () => {
                   className="form-control"
                   placeholder="Email"
                   value={editAdmin?.email || ''}
-                  onChange={e => setEditAdmin({ ...editAdmin, email: e.target.value })}
+                  onChange={(e) => setEditAdmin({ ...editAdmin, email: e.target.value })}
                 />
               </CCol>
             </CRow>
@@ -356,33 +328,20 @@ const AddManageAdmins = () => {
                   className="form-control"
                   placeholder="Phone Number"
                   value={editAdmin?.phoneNumber || ''}
-                  onChange={e => setEditAdmin({ ...editAdmin, phoneNumber: e.target.value })}
+                  onChange={(e) => setEditAdmin({ ...editAdmin, phoneNumber: e.target.value })}
                 />
               </CCol>
               <CCol md="6">
                 <label htmlFor="role" className="form-label">Role</label>
                 <select
                   name="role"
-                  className="form-control"
+                  className="form-select"
+                  onChange={(e) => setEditAdmin({ ...editAdmin, role: e.target.value })}
                   value={editAdmin?.role || 'admin'}
-                  onChange={e => setEditAdmin({ ...editAdmin, role: e.target.value })}
                 >
                   <option value="admin">Admin</option>
                   <option value="user">User</option>
                 </select>
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CCol md="12">
-                <label htmlFor="password" className="form-label">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  className="form-control"
-                  placeholder="Password"
-                  value={editAdmin?.password || ''}
-                  onChange={e => setEditAdmin({ ...editAdmin, password: e.target.value })}
-                />
               </CCol>
             </CRow>
           </CForm>
@@ -397,25 +356,25 @@ const AddManageAdmins = () => {
         </CModalFooter>
       </CModal>
 
-      {/* Modal for Confirming Edit */}
+      {/* Modal for Edit Confirmation */}
       <CModal visible={editConfirmationModalVisible} onClose={() => setEditConfirmationModalVisible(false)}>
         <CModalHeader>
-          <CModalTitle>Confirm Changes</CModalTitle>
+          <CModalTitle>Confirm Edit</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          Are you sure you want to save the changes made to this administrator?
+          Are you sure you want to save the changes?
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setEditConfirmationModalVisible(false)}>
             Cancel
           </CButton>
           <CButton color="primary" onClick={confirmSaveEdit}>
-            Confirm Save
+            Confirm
           </CButton>
         </CModalFooter>
       </CModal>
 
-      {/* Modal for Confirming Deletion */}
+      {/* Modal for Deleting Administrator */}
       <CModal visible={deleteModalVisible} onClose={() => setDeleteModalVisible(false)}>
         <CModalHeader>
           <CModalTitle>Confirm Deletion</CModalTitle>
@@ -428,7 +387,7 @@ const AddManageAdmins = () => {
             Cancel
           </CButton>
           <CButton color="danger" onClick={handleDeleteAdmin}>
-            Delete
+            Confirm Delete
           </CButton>
         </CModalFooter>
       </CModal>

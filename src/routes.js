@@ -1,86 +1,145 @@
-import React from 'react'
+import React, { Suspense } from 'react';
+import { ProtectedRoute } from './views/pages/login/protectedroute'; 
 
-const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
-const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
-const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
+const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
+const Colors = React.lazy(() => import('./views/theme/colors/Colors'));
+const Typography = React.lazy(() => import('./views/theme/typography/Typography'));
 
 // Base
-const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
-const Breadcrumbs = React.lazy(() => import('./views/base/breadcrumbs/Breadcrumbs'))
-const Cards = React.lazy(() => import('./views/base/cards/Cards'))
-const Carousels = React.lazy(() => import('./views/base/carousels/Carousels'))
-const Collapses = React.lazy(() => import('./views/base/collapses/Collapses'))
-const ListGroups = React.lazy(() => import('./views/base/list-groups/ListGroups'))
-const Navs = React.lazy(() => import('./views/base/navs/Navs'))
-const Paginations = React.lazy(() => import('./views/base/paginations/Paginations'))
-const Placeholders = React.lazy(() => import('./views/base/placeholders/Placeholders'))
-const Popovers = React.lazy(() => import('./views/base/popovers/Popovers'))
-const Progress = React.lazy(() => import('./views/base/progress/Progress'))
-const Spinners = React.lazy(() => import('./views/base/spinners/Spinners'))
-const Tabs = React.lazy(() => import('./views/base/tabs/Tabs'))
-const Tables = React.lazy(() => import('./views/base/tables/Tables'))
-const Tooltips = React.lazy(() => import('./views/base/tooltips/Tooltips'))
+const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'));
+const Breadcrumbs = React.lazy(() => import('./views/base/breadcrumbs/Breadcrumbs'));
+const Cards = React.lazy(() => import('./views/base/cards/Cards'));
+const Carousels = React.lazy(() => import('./views/base/carousels/Carousels'));
+const Collapses = React.lazy(() => import('./views/base/collapses/Collapses'));
+const ListGroups = React.lazy(() => import('./views/base/list-groups/ListGroups'));
+const Navs = React.lazy(() => import('./views/base/navs/Navs'));
+const Paginations = React.lazy(() => import('./views/base/paginations/Paginations'));
+const Placeholders = React.lazy(() => import('./views/base/placeholders/Placeholders'));
+const Popovers = React.lazy(() => import('./views/base/popovers/Popovers'));
+const Progress = React.lazy(() => import('./views/base/progress/Progress'));
+const Spinners = React.lazy(() => import('./views/base/spinners/Spinners'));
+const Tabs = React.lazy(() => import('./views/base/tabs/Tabs'));
+const Tables = React.lazy(() => import('./views/base/tables/Tables'));
+const Tooltips = React.lazy(() => import('./views/base/tooltips/Tooltips'));
 
 // Buttons
-const Buttons = React.lazy(() => import('./views/buttons/buttons/Buttons'))
-const ButtonGroups = React.lazy(() => import('./views/buttons/button-groups/ButtonGroups'))
-const Dropdowns = React.lazy(() => import('./views/buttons/dropdowns/Dropdowns'))
+const Buttons = React.lazy(() => import('./views/buttons/buttons/Buttons'));
+const ButtonGroups = React.lazy(() => import('./views/buttons/button-groups/ButtonGroups'));
+const Dropdowns = React.lazy(() => import('./views/buttons/dropdowns/Dropdowns'));
 
-//Forms
-const ChecksRadios = React.lazy(() => import('./views/forms/checks-radios/ChecksRadios'))
-const FloatingLabels = React.lazy(() => import('./views/forms/floating-labels/FloatingLabels'))
-const FormControl = React.lazy(() => import('./views/forms/form-control/FormControl'))
-const InputGroup = React.lazy(() => import('./views/forms/input-group/InputGroup'))
-const Layout = React.lazy(() => import('./views/forms/layout/Layout'))
-const Range = React.lazy(() => import('./views/forms/range/Range'))
-const Select = React.lazy(() => import('./views/forms/select/Select'))
-const Validation = React.lazy(() => import('./views/forms/validation/Validation'))
+// Forms
+const ChecksRadios = React.lazy(() => import('./views/forms/checks-radios/ChecksRadios'));
+const FloatingLabels = React.lazy(() => import('./views/forms/floating-labels/FloatingLabels'));
+const FormControl = React.lazy(() => import('./views/forms/form-control/FormControl'));
+const InputGroup = React.lazy(() => import('./views/forms/input-group/InputGroup'));
+const Layout = React.lazy(() => import('./views/forms/layout/Layout'));
+const Range = React.lazy(() => import('./views/forms/range/Range'));
+const Select = React.lazy(() => import('./views/forms/select/Select'));
+const Validation = React.lazy(() => import('./views/forms/validation/Validation'));
 
-const Charts = React.lazy(() => import('./views/charts/Charts'))
+const Charts = React.lazy(() => import('./views/charts/Charts'));
 
 // Icons
-const CoreUIIcons = React.lazy(() => import('./views/icons/coreui-icons/CoreUIIcons'))
-const Flags = React.lazy(() => import('./views/icons/flags/Flags'))
-const Brands = React.lazy(() => import('./views/icons/brands/Brands'))
+const CoreUIIcons = React.lazy(() => import('./views/icons/coreui-icons/CoreUIIcons'));
+const Flags = React.lazy(() => import('./views/icons/flags/Flags'));
+const Brands = React.lazy(() => import('./views/icons/brands/Brands'));
 
 // Notifications
-const Alerts = React.lazy(() => import('./views/notifications/alerts/Alerts'))
-const Badges = React.lazy(() => import('./views/notifications/badges/Badges'))
-const Modals = React.lazy(() => import('./views/notifications/modals/Modals'))
-const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
+const Alerts = React.lazy(() => import('./views/notifications/alerts/Alerts'));
+const Badges = React.lazy(() => import('./views/notifications/badges/Badges'));
+const Modals = React.lazy(() => import('./views/notifications/modals/Modals'));
+const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'));
 
-const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
+const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 
 const TestComponent = React.lazy(() => import('./views/testpage/testcomponent'));
 const Clients = React.lazy(() => import('./views/clients/clients'));
 const Calendar = React.lazy(() => import('./views/calendar/roomcalendar'));
 const AddManageAdmins = React.lazy(() => import('./views/adm/AddManageAdmins'));
-const rooms = React.lazy(() => import('./views/room/room'));
-const staff = React.lazy(() => import('./views/staff/staff'));
-const task = React.lazy(() => import('./views/task/task'));
-const invoice = React.lazy(() => import('./views/invoice/invoice'));
-
-
-
-
-
-
-
-
+const Rooms = React.lazy(() => import('./views/room/room'));
+const Staff = React.lazy(() => import('./views/staff/staff'));
+const Task = React.lazy(() => import('./views/task/task'));
+const Invoice = React.lazy(() => import('./views/invoice/invoice'));
+const Unauthorized = React.lazy(() => import('./views/pages/Unauthorized/Unauthorized'));
 
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-  { path: '/clients', name: 'Clients', element: Clients },
-  { path: '/adm', name: 'adm', element: AddManageAdmins },
-  { path: '/room', name: 'room', element: rooms },
-  { path: '/staff', name: 'staff', element: staff },
-  { path: '/task', name: 'task', element: task },
-  { path: '/invoice', name: 'invoice', element: invoice },
+  { path: '/', exact: true, name: 'Home', element: () => <Navigate to="dashboard" replace /> },
+  { 
+    path: '/dashboard', 
+    name: 'Dashboard', 
+    element: () => (
+      <ProtectedRoute requiredPermission="view_dashboard">
+        <Dashboard />
+      </ProtectedRoute>
+    )
+  },
+  { 
+    path: '/clients', 
+    name: 'Clients', 
+    element: () => (
+      <ProtectedRoute requiredPermission="manage_clients">
+        <Clients />
+      </ProtectedRoute>
+    )
+  },
+  { 
+    path: '/adm', 
+    name: 'Adm', 
+    element: () => (
+      <ProtectedRoute requiredPermission="manage_admins">
+        <AddManageAdmins />
+      </ProtectedRoute>
+    )
+  },
+  { 
+    path: '/room', 
+    name: 'Room', 
+    element: () => (
+      <ProtectedRoute requiredPermission="view_rooms">
+        <Suspense fallback={<div>Loading...</div>}>
+          <Rooms />
+        </Suspense>
+      </ProtectedRoute>
+    )
+  },
+  { 
+    path: '/staff', 
+    name: 'Staff', 
+    element: () => (
+      <ProtectedRoute requiredPermission="view_staff">
+        <Staff />
+      </ProtectedRoute>
+    ) 
+  },
+  { 
+    path: '/task', 
+    name: 'Task', 
+    element: () => (
+      <ProtectedRoute requiredPermission="manage_tasks">
+        <Task />
+      </ProtectedRoute>
+    ) 
+  },
+  { 
+    path: '/invoice', 
+    name: 'Invoice', 
+    element: () => (
+      <ProtectedRoute requiredPermission="view_invoice">
+        <Invoice />
+      </ProtectedRoute>
+    ) 
+  },
+  { 
+    path: '/calendar', 
+    name: 'Calendar', 
+    element: () => (
+      <ProtectedRoute requiredPermission="view_calendar">
+        <Calendar />
+      </ProtectedRoute>
+    ) 
+  },
+  { path: '/unauthorized', name: 'Unauthorized', element: () => <Unauthorized /> },
 
-
-
-  { path: '/calendar', name: 'Calendar', element: Calendar },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
@@ -125,6 +184,6 @@ const routes = [
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
   { path: '/base/test-page', name: 'Test Page', element: TestComponent },
-]
+];
 
-export default routes
+export default routes;

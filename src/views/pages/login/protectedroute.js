@@ -1,10 +1,21 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../../contexts/authcontext';
+import { hasPermission } from '../../../permissions';  // Asegúrate de importar la función
 
-const ProtectedRoute = ({ children }) => {
-  const user = localStorage.getItem('adminUser'); // Comprueba si el usuario está en el localStorage
+export const ProtectedRoute = ({ children, requiredPermission }) => {
+  const { user } = useAuth();
+  const location = useLocation();
 
-  return user ? children : <Navigate to="/login" replace />;
+  // Verificar si el usuario está logueado
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Verificar si se requiere un permiso y si el usuario tiene los permisos necesarios
+  if (requiredPermission && !hasPermission(user, requiredPermission)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return children;
 };
-
-export default ProtectedRoute;
