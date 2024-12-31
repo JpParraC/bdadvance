@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { CButton, CCard, CCardBody, CCardHeader, CCol, CForm, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilPen, cilTrash } from '@coreui/icons';
-import { hasPermission } from '../../../permissions'; // Importa la función de permisos
-import { useAuth } from '../../../contexts/authcontext'; // Importa el contexto de autenticación
+import { hasPermission } from '../../permissions'; 
+import { useAuth } from '../../contexts/authcontext';
 import '../../css/styles.css';
 
 const AddManageAdmins = () => {

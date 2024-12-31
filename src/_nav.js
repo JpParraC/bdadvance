@@ -26,6 +26,7 @@ import {
   cilWallpaper,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+import { CgFileDocument } from 'react-icons/cg';
 
 const _nav = [
   {
@@ -50,6 +51,13 @@ const _nav = [
     name: 'Clients', // Nombre que aparecerá en el menú
     to: '/clients', // Ruta hacia la pantalla de clientes
     icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+   
+  },
+  {
+    component: CNavItem,
+    name: 'Reservations', // Nombre que aparecerá en el menú
+    to: '/reservation', // Ruta hacia la pantalla de clientes
+    icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
    
   },
   {

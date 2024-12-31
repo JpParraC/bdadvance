@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { getPermissionsFromRole } from "../permissions"; // Asegúrate de importar correctamente esta función
 
 const AuthContext = createContext();
 
@@ -7,21 +8,40 @@ export const AuthProvider = ({ children }) => {
 
   // Cargar el usuario desde localStorage al iniciar la aplicación
   useEffect(() => {
-    const storedUser = localStorage.getItem('adminUser');
+    const storedUser = localStorage.getItem("adminUser");
     if (storedUser) {
-      setUser(JSON.parse(storedUser)); // Recupera el usuario del localStorage
+      const parsedUser = JSON.parse(storedUser);
+      setUser({
+        ...parsedUser,
+        permissions: getPermissionsFromRole(parsedUser.role), // Calcula permisos basados en su rol
+      });
     }
   }, []);
 
   const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('adminUser', JSON.stringify(userData)); // Guardar usuario en localStorage
+    // Asigna los permisos al usuario según su rol
+    const userWithPermissions = {
+      ...userData,
+      permissions: getPermissionsFromRole(userData.role),
+    };
+
+    setUser(userWithPermissions);
+    localStorage.setItem("adminUser", JSON.stringify(userWithPermissions)); // Guardar usuario con permisos en localStorage
   };
 
   const logout = () => {
+    console.log("Logout llamado");
+    if (user) {
+      console.log(`Usuario que cerró sesión: ${JSON.stringify(user)}`);
+      console.log("Sesión finalizada");
+    }
     setUser(null);
-    localStorage.removeItem('adminUser'); // Eliminar el usuario del localStorage
+    localStorage.removeItem("adminUser");
+    
+    
   };
+  
+  
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

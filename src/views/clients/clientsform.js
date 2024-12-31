@@ -13,6 +13,7 @@ const ClientsForm = ({ show, handleClose, handleSave, client }) => {
   const [nationality, setNationality] = useState('');
 
   useEffect(() => {
+    console.log(client); 
     if (client) {
       setIdGuest(client.id_guest || ''); // Aseguramos un valor predeterminado
       setFirstName(client.first_name || '');

@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { ProtectedRoute } from './views/pages/login/protectedroute'; 
+import { Navigate } from 'react-router-dom';
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'));
@@ -61,6 +62,8 @@ const Staff = React.lazy(() => import('./views/staff/staff'));
 const Task = React.lazy(() => import('./views/task/task'));
 const Invoice = React.lazy(() => import('./views/invoice/invoice'));
 const Unauthorized = React.lazy(() => import('./views/pages/Unauthorized/Unauthorized'));
+const Reservation = React.lazy(() => import('./views/reservation/reservation'));
+
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: () => <Navigate to="dashboard" replace /> },
@@ -73,12 +76,22 @@ const routes = [
       </ProtectedRoute>
     )
   },
+  
   { 
     path: '/clients', 
     name: 'Clients', 
     element: () => (
       <ProtectedRoute requiredPermission="manage_clients">
         <Clients />
+      </ProtectedRoute>
+    )
+  },
+  { 
+    path: '/reservation', 
+    name: 'Reservation', 
+    element: () => (
+      <ProtectedRoute requiredPermission="manage_reservations">
+        <Reservation />
       </ProtectedRoute>
     )
   },

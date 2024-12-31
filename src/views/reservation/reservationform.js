@@ -20,7 +20,7 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
       try {
         const roomsResponse = await axios.get('http://localhost:3001/rooms');
         const roomTypesResponse = await axios.get('http://localhost:3001/room_types');
-        const reservationsResponse = await axios.get('http://localhost:3001/reservations');
+        const reservationsResponse = await axios.get('http://localhost:5000/api/reservations/');
 
         setRooms(roomsResponse.data);
         setRoomTypes(roomTypesResponse.data);

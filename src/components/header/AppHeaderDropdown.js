@@ -17,6 +17,7 @@ const AppHeaderDropdown = () => {
 
   // Función para cerrar sesión
   const handleLogout = () => {
+    console.log("Logout llamado");
     // Limpiar el localStorage
     localStorage.clear();
 

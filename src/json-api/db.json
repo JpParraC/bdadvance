@@ -118,6 +118,20 @@
         }
       ],
       "clientId": "30818050"
+    },
+    {
+      "id": "fcae",
+      "dateReserve": "2024-12-30",
+      "dateCheckin": "2025-01-01",
+      "dateCheckout": "2025-01-03",
+      "numberNights": 2,
+      "rooms": [
+        {
+          "roomType": "TYPE001",
+          "roomAssigned": "ROOM001"
+        }
+      ],
+      "clientId": 1
     }
   ],
   "payments": [
@@ -315,11 +329,11 @@
     {
       "id": "3",
       "cedula": "12345678",
-      "username": "receptionist",
+      "username": "rt",
       "firstName": "Maria",
       "lastName": "Perez",
       "email": "maria.perez@example.com",
-      "password": "hashed_password_3",
+      "password": "12",
       "phoneNumber": "04125558877",
       "role": "receptionist"
     }
