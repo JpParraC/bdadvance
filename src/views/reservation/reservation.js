@@ -44,7 +44,7 @@ const Reservations = () => {
 
   const addReservation = async (newReservation) => {
     try {
-      const response = await axios.post('http://localhost:3001/reservations', newReservation);
+      const response = await axios.post('http://localhost:5000/api/reservations/', newReservation);
       setReservations([...reservations, response.data]);
       setShowReservationForm(false);
     } catch (error) {
@@ -54,7 +54,7 @@ const Reservations = () => {
 
   const updateReservation = async (updatedReservation) => {
     try {
-      const response = await axios.put(`http://localhost:3001/reservations/${updatedReservation.id}`, updatedReservation);
+      const response = await axios.put(`http://localhost:5000/api/reservations/'${updatedReservation.id}`, updatedReservation);
       const updatedReservations = reservations.map((reservation) =>
         reservation.id === updatedReservation.id ? response.data : reservation
       );
@@ -67,7 +67,7 @@ const Reservations = () => {
 
   const deleteReservation = async (id) => {
     try {
-      await axios.delete(`http://localhost:3001/reservations/${id}`);
+      await axios.delete(`http://localhost:5000/api/reservations/'/${id}`);
       setReservations(reservations.filter((reservation) => reservation.id !== id));
     } catch (error) {
       console.error("Error deleting reservation:", error);
@@ -104,21 +104,23 @@ const Reservations = () => {
                 <th>Actions</th>
               </tr>
             </thead>
-                          <tbody>
+            <tbody>
                 {Array.isArray(filteredReservations) && filteredReservations.length > 0 ? (
                   filteredReservations.map((reservation) => (
                     <tr className="text-center" key={reservation.id}>
                       <td>{reservation.id}</td>
-                      <td>{reservation.clientId}</td>
-                      <td>{reservation.date_reserve}</td>
-                      <td>{reservation.date_checkin}</td>
-                      <td>{reservation.date_checkout}</td>
+                      <td>{reservation.guests_id_guest}</td>
+
+                      {/* Formateo de la fecha */}
+                      <td>{new Date(reservation.date_reserve).toLocaleDateString()}</td>
+                      <td>{new Date(reservation.date_checkin).toLocaleDateString()}</td>
+                      <td>{new Date(reservation.date_checkout).toLocaleDateString()}</td>
+                      
                       <td>{reservation.number_nights}</td>
-                      <td>
-                        {reservation.rooms
-                          ?.map((room) => `${room.roomType} (${room.roomAssigned})`)
-                          .join(', ') || 'N/A'}
-                      </td>
+
+                      {/* Mostrar las habitaciones separadas por comas */}
+                      <td>{reservation.rooms ? reservation.rooms.join(', ') : 'No rooms assigned'}</td>
+
                       <td>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           <Button
@@ -150,6 +152,7 @@ const Reservations = () => {
                   </tr>
                 )}
               </tbody>
+
 
           </Table>
         </div>

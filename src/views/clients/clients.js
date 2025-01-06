@@ -18,12 +18,19 @@ const Clients = () => {
   const [clientCheckedIn, setClientCheckedIn] = useState(false);
   const [clientIdFilter, setClientIdFilter] = useState('');
 
+  // States for modals
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false);
+  const [showAddClientSuccessModal, setShowAddClientSuccessModal] = useState(false);
+  const [deleteClientId, setDeleteClientId] = useState(null);
+
   const fetchClients = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/users/');
       const clientsData = response.data;
-  
+
       const formattedClients = clientsData.map(client => ({
+        id: client.id,
         idGuest: client.id_guest,
         firstName: client.first_name,
         middleName: client.middle_name,
@@ -34,7 +41,7 @@ const Clients = () => {
         numberPersons: client.number_persons,
         nationality: client.nationality
       }));
-  
+
       setClients(formattedClients);
     } catch (error) {
       console.error("Error loading clients:", error);
@@ -52,7 +59,7 @@ const Clients = () => {
     }
   };
 
-  const filteredClients = clients.filter(client => 
+  const filteredClients = clients.filter(client =>
     client.idGuest?.toString().includes(clientIdFilter) || client.idGuest === 0
   );
 
@@ -65,37 +72,44 @@ const Clients = () => {
   const handleCloseForm = () => { setShowForm(false); };
 
   const handleOpenReservationForm = (client) => {
-    console.log("Selected Client: ", client);  // Verifica que el cliente esté correctamente seleccionado
+    console.log("Selected Client: ", client);
     setSelectedClient(client);
-    const isClientRegistered = clients.some(existingClient => existingClient.idGuest === client.idGuest);
-    
-    if (!isClientRegistered) {
-      alert('Client is not registered. Please register the client first.');
+  
+    // Verificar si el cliente está registrado antes de permitir la reserva
+    if (!clientCheckedIn) {
+      // Si no está "checked-in", mostrar el modal para confirmar el check-in
+      setShowCheckInModal(true);
     } else {
-      setShowCheckInModal(true);  // Muestra el modal de confirmación de check-in
+      // Si está "checked-in", abrir directamente el formulario de reserva
+      setShowReservationForm(true);
     }
   };
+  
+
 
   const handleCloseReservationForm = () => { setShowReservationForm(false); };
 
   const handleCheckInConfirmation = (checkedIn) => {
-    setShowCheckInModal(false); // Cierra el modal de check-in
+    setShowCheckInModal(false); // Cerrar el modal después de la confirmación
   
     if (checkedIn) {
-      setClientCheckedIn(true); // Marca al cliente como checked-in
+      setClientCheckedIn(true); // Marcar al cliente como "checked-in"
       console.log("Client checked-in, opening ReservationForm...");
-      setShowReservationForm(true); // Abre el formulario de reserva
+      setShowReservationForm(true); // Mostrar el formulario de reserva
     } else {
       alert('Client must be checked in to make a reservation.');
     }
   };
+  
+
 
   const addClient = async (newClient) => {
     try {
       const response = await axios.post('http://localhost:5000/api/users/', newClient);
       setClients(prevClients => [...prevClients, response.data]);
       setShowForm(false);
-      fetchClients();  
+      setShowAddClientSuccessModal(true);  // Show success modal after adding client
+      fetchClients();
     } catch (error) {
       console.error("Error adding client:", error);
       alert("An error occurred while adding the client.");
@@ -105,7 +119,7 @@ const Clients = () => {
   const updateClient = async (updatedClient) => {
     try {
       const response = await axios.put(`http://localhost:5000/api/users/${updatedClient.id}`, updatedClient);
-      const updatedClients = clients.map(client => 
+      const updatedClients = clients.map(client =>
         client.id === updatedClient.id ? response.data : client
       );
       setClients(updatedClients);
@@ -116,10 +130,12 @@ const Clients = () => {
     }
   };
 
-  const deleteClient = async (id) => {
+  const deleteClient = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/users/${id}`);
-      setClients(clients.filter(client => client.idGuest !== id));
+      await axios.delete(`http://localhost:5000/api/users/${deleteClientId}`);
+      setClients(clients.filter(client => client.id !== deleteClientId));
+      setShowDeleteConfirmModal(false); // Close the confirmation modal
+      setShowDeleteSuccessModal(true);  // Show success modal after deletion
     } catch (error) {
       console.error("Error deleting client:", error);
       alert("An error occurred while deleting the client.");
@@ -127,8 +143,8 @@ const Clients = () => {
   };
 
   const addReservation = async (reservation) => {
-    console.log("Selected Client: ", selectedClient);  // Verifica los datos del cliente seleccionado
-  
+    console.log("Selected Client: ", selectedClient);
+
     if (clientCheckedIn && selectedClient) {
       reservation.clientId = selectedClient.idGuest;
       try {
@@ -156,9 +172,9 @@ const Clients = () => {
         onChange={(e) => setClientIdFilter(e.target.value)}
         className="search-input"
         style={{ marginLeft: '10px', padding: '5px' }}
-        min="0" 
-        max="999999" 
-        step="1" 
+        min="0"
+        max="999999"
+        step="1"
       />
 
       <div className="table-responsive hh mt-3">
@@ -195,7 +211,7 @@ const Clients = () => {
                       <Button variant="link" onClick={() => { setEditClient(client); setShowForm(true); }} title="Edit">
                         <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
                       </Button>
-                      <Button variant="link" onClick={() => deleteClient(client.idGuest)} title="Delete">
+                      <Button variant="link" onClick={() => { setDeleteClientId(client.id); setShowDeleteConfirmModal(true); }} title="Delete">
                         <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
                       </Button>
                       <Button variant="link" onClick={() => handleOpenReservationForm(client)} title="Add Reservation">
@@ -210,41 +226,86 @@ const Clients = () => {
         </div>
       </div>
 
-      {/* Modal for Client Form */}
       {showForm && (
         <ClientsForm
+          show={showForm}
+          handleClose={handleCloseForm}
+          handleSave={editClient ? updateClient : addClient}
           client={editClient}
-          onClose={handleCloseForm}
-          onSave={editClient ? updateClient : addClient}
         />
       )}
 
-      {/* Modal for Check-In Confirmation */}
-      {showCheckInModal && (
-        <Modal show={showCheckInModal} onHide={() => setShowCheckInModal(false)}>
+      {/* Modal for Confirming Deletion */}
+      {showDeleteConfirmModal && (
+        <Modal show={showDeleteConfirmModal} onHide={() => setShowDeleteConfirmModal(false)}>
           <Modal.Body>
-            Are you sure you want to check in this client?
+            Are you sure you want to delete this client?
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => handleCheckInConfirmation(false)}>No</Button>
-            <Button variant="primary" onClick={() => handleCheckInConfirmation(true)}>Yes</Button>
+            <Button variant="secondary" onClick={() => setShowDeleteConfirmModal(false)}>No</Button>
+            <Button variant="danger" onClick={deleteClient}>Yes, Delete</Button>
           </Modal.Footer>
         </Modal>
       )}
 
-      {/* Reservation Form */}
-      // Asegúrate de pasar 'show' correctamente al formulario de reservas
-        {showReservationForm && (
-          <ReservationForm 
-            show={showReservationForm}  // Verifica que esta línea pase 'show'
-            handleClose={handleCloseReservationForm} 
-            addReservation={addReservation}
+      {/* Modal for Successful Deletion */}
+      {showDeleteSuccessModal && (
+        <Modal show={showDeleteSuccessModal} onHide={() => setShowDeleteSuccessModal(false)}>
+          <Modal.Body>
+            The client was successfully deleted.
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={() => setShowDeleteSuccessModal(false)}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+
+          {showCheckInModal && (
+          <Modal show={showCheckInModal} onHide={() => setShowCheckInModal(false)}>
+            <Modal.Body>
+              Is this client checked-in?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => handleCheckInConfirmation(false)}>No</Button>
+              <Button variant="primary" onClick={() => handleCheckInConfirmation(true)}>Yes</Button>
+            </Modal.Footer>
+          </Modal>
+        )}
+        {showForm && (
+      <ClientsForm
+        show={showForm}
+        handleClose={handleCloseForm}
+        handleSave={editClient ? updateClient : addClient}
+        client={editClient}
+      />
+    )}
+
+      {showReservationForm && (
+          <ReservationForm
+          show={showReservationForm}
+          handleClose={() => setShowReservationForm(false)}
+          client={selectedClient}
+          addReservation={addReservation}
           
-          />
+        />
         )}
 
-     </div>
-    );
+
+      {/* Modal for Successfully Adding a Client */}
+      {showAddClientSuccessModal && (
+        <Modal show={showAddClientSuccessModal} onHide={() => setShowAddClientSuccessModal(false)}>
+          <Modal.Body>
+            The client was successfully added.
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={() => setShowAddClientSuccessModal(false)}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+    </div>
+
+    
+  );
 };
 
 export default Clients;
