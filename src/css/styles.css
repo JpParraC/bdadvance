@@ -250,3 +250,34 @@ table tr:nth-child(even) {
 .hh{
   white-space: nowrap;
 }
+/* Estilo de tabla dentro del Popover */
+.custom-popover .popover-header {
+  background-color: #1198ff; /* Fondo verde para el encabezado */
+  color: white; /* Texto blanco */
+  font-weight: bold;
+}
+
+.custom-popover .popover-body {
+  background-color: #f8f9fa; /* Fondo gris claro */
+  color: #333; /* Texto oscuro */
+  padding: 10px;
+}
+
+.custom-popover table {
+  width: 100%; /* Hacer que la tabla ocupe todo el ancho */
+  border-collapse: collapse; /* Eliminar espacio entre celdas */
+}
+
+.custom-popover th, .custom-popover td {
+  padding: 8px; /* Espaciado interno de celdas */
+  border: 1px solid #ddd; /* Borde gris claro */
+  text-align: left; /* Alineación del texto */
+}
+
+.custom-popover th {
+  background-color: #f1f1f1; /* Fondo gris claro para las cabeceras */
+}
+
+.custom-popover td {
+  background-color: #fff; /* Fondo blanco para las celdas */
+}

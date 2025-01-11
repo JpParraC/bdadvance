@@ -3,69 +3,156 @@ import Calendar from 'react-calendar';
 import { CCard, CCardBody, CCardHeader, CCol, CRow } from '@coreui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDoorOpen } from '@fortawesome/free-solid-svg-icons'; 
+import axios from 'axios';
+import { Popover, OverlayTrigger } from 'react-bootstrap'; // Importar popover
 import 'react-calendar/dist/Calendar.css';
 import '../../css/styles.css';
 
-const API_URL = "http://localhost:3001";
+const API_URL = "http://localhost:5000/api"; // URL base del API
 
 const RoomCalendar = () => {
-  const [value, setValue] = useState(new Date());
-  const [rooms, setRooms] = useState([]);
-  const [reservations, setReservations] = useState([]);
+  const [value, setValue] = useState(new Date()); // Inicializa con la fecha de hoy
+  const [rooms, setRooms] = useState([]); 
+  const [roomAvailability, setRoomAvailability] = useState({}); // Mantener estado de disponibilidad por habitación
+  const [reservations, setReservations] = useState([]); // Mantener estado de las reservas
 
-  const fetchRoomsAndReservations = async () => {
+  // Función para obtener las habitaciones
+  const fetchRooms = async () => {
     try {
-      const roomsResponse = await fetch(`${API_URL}/rooms`);
-      const reservationsResponse = await fetch(`${API_URL}/reservations`);
-      const roomsData = await roomsResponse.json();
-      const reservationsData = await reservationsResponse.json();
-      setRooms(roomsData);
-      setReservations(reservationsData);
+      const response = await axios.get(`${API_URL}/rooms`); // Petición a la API para obtener habitaciones
+      setRooms(response.data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching rooms:", error);
     }
   };
 
-  const isRoomReserved = (roomId, selectedDate) => {
-    return reservations.some((reservation) => {
-      const checkinDate = new Date(reservation.dateCheckin);
-      const checkoutDate = new Date(reservation.dateCheckout);
-      const currentDate = new Date(selectedDate);
-      return reservation.rooms.some((room) => room.roomAssigned === roomId) &&
-        currentDate >= checkinDate && 
-        currentDate < checkoutDate;
-    });
+  // Función para obtener las reservas en un rango de fechas
+  const fetchReservationsForDateRange = async (checkin, checkout) => {
+    try {
+      const response = await axios.get(`${API_URL}/reservations`, {
+        params: { checkin, checkout },
+      });
+      setReservations(response.data); // Guardamos las reservas en el estado
+    } catch (error) {
+      console.error("Error fetching reservations:", error);
+    }
   };
 
-  const updateRoomStatus = (date) => {
-    const formattedDate = date.toISOString().split('T')[0];
-    const updatedRooms = rooms.map((room) => {
-      const reserved = isRoomReserved(room.id, formattedDate);
-      return {
-        ...room,
-        status: reserved ? 'occupied' : 'available',
-      };
-    });
+  // Función para verificar la disponibilidad de una habitación
+  const checkRoomAvailability = (roomId, checkin, checkout) => {
+    // Verificamos si la habitación está reservada en el rango de fechas
+    for (const reservation of reservations) {
+      if (reservation.rooms.includes(roomId)) {
+        const isOverlapping =
+          (new Date(checkin) >= new Date(reservation.date_checkin) && new Date(checkin) < new Date(reservation.date_checkout)) ||
+          (new Date(checkout) > new Date(reservation.date_checkin) && new Date(checkout) <= new Date(reservation.date_checkout));
 
-    // Solo actualiza si hay cambios
-    if (JSON.stringify(updatedRooms) !== JSON.stringify(rooms)) {
-      setRooms(updatedRooms);
+        if (isOverlapping) {
+          return false; // Si hay superposición de fechas, la habitación no está disponible
+        }
+      }
     }
+    return true; // Si no hay reservas, la habitación está disponible
+  };
+
+  // Función para obtener la disponibilidad de las habitaciones para la fecha seleccionada
+  const fetchRoomAvailability = async (selectedDate) => {
+    const checkin = selectedDate.toISOString(); // Convertimos la fecha seleccionada a formato ISO
+    const checkout = new Date(selectedDate);
+    checkout.setDate(checkout.getDate() + 1); // Agregar 1 día para el checkout
+
+    const availability = {};
+
+    // Verificamos la disponibilidad de cada habitación
+    for (const room of rooms) {
+      const isAvailable = checkRoomAvailability(room.id, checkin, checkout);
+      availability[room.id] = isAvailable; // Guardamos la disponibilidad por habitación
+    }
+
+    setRoomAvailability(availability); // Actualizamos el estado con la disponibilidad de todas las habitaciones
   };
 
   const handleDateChange = (date) => {
-    setValue(date);
+    setValue(date); // Establecer la fecha seleccionada
+    fetchRoomAvailability(date); // Realizar la verificación de disponibilidad cuando se cambia la fecha
   };
 
+  // useEffect para cargar habitaciones al iniciar el componente
   useEffect(() => {
-    fetchRoomsAndReservations();
+    fetchRooms(); // Cargar habitaciones al iniciar
   }, []);
 
+  // useEffect para obtener las reservas y verificar la disponibilidad en la fecha seleccionada
   useEffect(() => {
-    if (rooms.length > 0 && reservations.length > 0) {
-      updateRoomStatus(value);
+    if (rooms.length > 0) { // Solo buscar disponibilidad cuando las habitaciones estén cargadas
+      fetchReservationsForDateRange(value, new Date(value).setDate(value.getDate() + 1)); // Verificamos las reservas para la fecha seleccionada
     }
-  }, [value, reservations]);
+  }, [rooms, value]); // Ejecuta cada vez que se cargan las habitaciones o cambia la fecha
+
+  // Función para mostrar detalles de la habitación cuando está ocupada
+  const renderRoomDetails = (roomId) => {
+    const roomReservations = reservations.filter((reservation) => 
+      reservation.rooms.includes(roomId) // Verificamos si la habitación está en la reserva
+    );
+
+    if (roomReservations.length > 0) {
+      const reservation = roomReservations[0]; // Tomamos la primera reserva que encontremos
+      return (
+        <>
+          <tr>
+            <td><strong>Room ID:</strong></td>
+            <td>{roomId}</td>
+          </tr>
+          <tr>
+            <td><strong>Name:</strong></td>
+            <td>{rooms.find(room => room.id === roomId)?.name || `Room ${roomId}`}</td>
+          </tr>
+          <tr>
+            <td><strong>Status:</strong></td>
+            <td>Occupied</td>
+          </tr>
+          <tr>
+            <td><strong>Reservation ID:</strong></td>
+            <td>{reservation.id}</td>
+          </tr>
+          <tr>
+            <td><strong>Guest ID:</strong></td>
+            <td>{reservation.guests_id_guest}</td>
+          </tr>
+          <tr>
+            <td><strong>Check-in Date:</strong></td>
+            <td>{new Date(reservation.date_checkin).toLocaleDateString()}</td>
+          </tr>
+          <tr>
+            <td><strong>Check-out Date:</strong></td>
+            <td>{new Date(reservation.date_checkout).toLocaleDateString()}</td>
+          </tr>
+          <tr>
+            <td><strong>Number of Nights:</strong></td>
+            <td>{reservation.number_nights}</td>
+          </tr>
+        </>
+      );
+    }
+
+    // Si no hay reservas, mostramos un mensaje predeterminado
+    return (
+      <>
+        <tr>
+          <td><strong>Room ID:</strong></td>
+          <td>{roomId}</td>
+        </tr>
+        <tr>
+          <td><strong>Name:</strong></td>
+          <td>{rooms.find(room => room.id === roomId)?.name || `Room ${roomId}`}</td>
+        </tr>
+        <tr>
+          <td><strong>Status:</strong></td>
+          <td>Available</td>
+        </tr>
+      </>
+    );
+  };
 
   return (
     <CCard>
@@ -92,28 +179,55 @@ const RoomCalendar = () => {
               className="mb-4"
               style={{ padding: '10px' }}
             > 
-              <div
-                className={`room p-2 text-white text-center mx-auto rounded ${room.status}`}
-                title={room.name || `Room ${room.id}`}
-                style={{
-                  backgroundColor: room.status === 'available' ? 'green' : 'red',
-                  height: '80px',
-                  width: '70%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '0',
-                  margin: '0',
-                }}
+              <OverlayTrigger
+                trigger="hover"
+                placement="top"
+                overlay={
+                  <Popover id={`popover-${room.id}`} className="custom-popover"> {/* Agregamos la clase personalizada */}
+                    <Popover.Header as="h3">Room {room.id}</Popover.Header>
+                    <Popover.Body>
+                      {roomAvailability[room.id] ? (
+                        <div>Available</div>
+                      ) : (
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Field</th>
+                              <th>Details</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {renderRoomDetails(room.id)}
+                          </tbody>
+                        </table>
+                      )}
+                    </Popover.Body>
+                  </Popover>
+                }
               >
-                <FontAwesomeIcon 
-                  icon={faDoorOpen} 
-                  size="1x" 
-                  className="mb-3" 
-                />
-                <div style={{ fontSize: '10px', marginTop: '2px' }}>{room.name || `Room ${room.id}`}</div>
-              </div>
+                <div
+                  className={`room p-2 text-white text-center mx-auto rounded ${roomAvailability[room.id] ? 'available' : 'occupied'}`}
+                  title={`Room ${room.id}`}
+                  style={{
+                    backgroundColor: roomAvailability[room.id] ? 'green' : 'red',
+                    height: '80px',
+                    width: '70%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '0',
+                    margin: '0',
+                  }}
+                >
+                  <FontAwesomeIcon 
+                    icon={faDoorOpen} 
+                    size="1x" 
+                    className="mb-3" 
+                  />
+                  <div style={{ fontSize: '10px', marginTop: '2px' }}>{room.name || `Room ${room.id}`}</div>
+                </div>
+              </OverlayTrigger>
             </CCol>
           ))}
         </CRow>

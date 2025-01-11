@@ -271,14 +271,7 @@ const Clients = () => {
             </Modal.Footer>
           </Modal>
         )}
-        {showForm && (
-      <ClientsForm
-        show={showForm}
-        handleClose={handleCloseForm}
-        handleSave={editClient ? updateClient : addClient}
-        client={editClient}
-      />
-    )}
+       
 
       {showReservationForm && (
           <ReservationForm

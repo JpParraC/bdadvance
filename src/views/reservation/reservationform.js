@@ -19,6 +19,10 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
+  const formatDate = (date) => {
+    const d = new Date(date);
+    return d.toISOString().split('T')[0]; // Devuelve solo la parte de la fecha (yyyy-MM-dd)
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,18 +49,25 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
         dateCheckin: '',
         dateCheckout: '',
         numberNights: '',
+        guests_id_guest: '',
       });
       setRoomBlocks([{ roomType: '', roomAssigned: '' }]);
       setAssignedRooms([]);
     } else if (reservation) {
       setFormData({
-        dateReserve: reservation.dateReserve,
-        dateCheckin: reservation.dateCheckin,
-        dateCheckout: reservation.dateCheckout,
-        numberNights: reservation.numberNights,
+        dateReserve: formatDate(reservation.date_reserve),
+        dateCheckin: formatDate(reservation.date_checkin),
+        dateCheckout: formatDate(reservation.date_checkout),
+        numberNights: reservation.number_nights,
+        guests_id_guest: reservation.guests_id_guest, 
       });
-      setRoomBlocks(reservation.rooms || [{ roomType: '', roomAssigned: '' }]);
-      setAssignedRooms(reservation.rooms.map(room => room.roomAssigned));
+      setRoomBlocks(
+        reservation.rooms.map(room => ({
+          roomType: room.roomTypeId,
+          roomAssigned: room.id,
+        })) || [{ roomType: '', roomAssigned: '' }]
+      );
+      setAssignedRooms(reservation.rooms.map(room => room.id));
     }
   }, [show, reservation]);
 
@@ -89,36 +100,30 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
     newRoomBlocks[index].roomAssigned = '';
     setRoomBlocks(newRoomBlocks);
   };
-  
+
   const isRoomAvailable = async (roomId, dateCheckin, dateCheckout) => {
     try {
-      // Convertir roomId a entero para asegurarnos de que se envíe como un número
       const roomIdInt = parseInt(roomId, 10);
-  
       if (isNaN(roomIdInt)) {
         console.error('Invalid roomId provided:', roomId);
         setErrorMessage('Invalid room ID.');
         setShowErrorModal(true);
         return false;
       }
-  
-      // Crear el objeto de parámetros para la consulta
+
       const params = {
-        roomId: roomIdInt,  // Enviar roomId como un valor simple (no en arreglo)
+        roomId: roomIdInt,
         checkin: new Date(dateCheckin).toISOString(),
         checkout: new Date(dateCheckout).toISOString(),
         _: new Date().getTime(),
       };
-  
-      // Mostrar los parámetros que se están enviando al backend
+
       console.log('Sending the following parameters to the backend:', params);
-  
-      // Llamada a la API para verificar si la habitación está disponible
+
       const response = await axios.get('http://localhost:5000/api/availability', {
         params: params,
       });
-  
-      // La API devuelve true si la habitación está disponible
+
       return response.data.isAvailable;
     } catch (error) {
       console.error('Error checking room availability:', error);
@@ -127,36 +132,32 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
       return false;
     }
   };
-  
-  
+
   const handleRoomChange = async (index, roomAssigned) => {
     const { dateCheckin, dateCheckout } = formData;
-  
-    // Verifica si la habitación está disponible en las fechas seleccionadas utilizando la API
+
     const isAvailable = await isRoomAvailable(roomAssigned, dateCheckin, dateCheckout);
-  
+
     if (!isAvailable) {
       setErrorMessage(`Room ID: ${roomAssigned} is not available for the selected dates.`);
       setShowErrorModal(true);
       return;
     }
-  
+
     const newRoomBlocks = [...roomBlocks];
-  
-    // Verifica si la habitación ya ha sido asignada
     if (assignedRooms.includes(roomAssigned)) {
       setErrorMessage(`Room ID: ${roomAssigned} has already been assigned.`);
       setShowErrorModal(true);
       return;
     }
-  
+
     newRoomBlocks[index].roomAssigned = roomAssigned;
     setRoomBlocks(newRoomBlocks);
-  
+
     const newAssignedRooms = newRoomBlocks.map(block => block.roomAssigned).filter(Boolean);
     setAssignedRooms(newAssignedRooms);
   };
-  
+
   const handleAddRoom = () => {
     setRoomBlocks([...roomBlocks, { roomType: '', roomAssigned: '' }]);
   };
@@ -173,36 +174,38 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
     e.preventDefault();
 
     const roomsAssigned = roomBlocks
-        .map(block => parseInt(block.roomAssigned, 10))
-        .filter(room => !isNaN(room));
+      .map(block => parseInt(block.roomAssigned, 10))
+      .filter(room => !isNaN(room));
 
     const reservationData = {
-        ...formData,
-        rooms: roomsAssigned,
-        date_reserve: new Date(formData.dateReserve).toISOString(),
-        date_checkin: new Date(formData.dateCheckin).toISOString(),
-        date_checkout: new Date(formData.dateCheckout).toISOString(),
-        number_nights: formData.numberNights,
-        guests_id_guest: client.idGuest,
+      ...formData,
+      rooms: roomsAssigned,
+      date_reserve: new Date(formData.dateReserve).toISOString(),
+      date_checkin: new Date(formData.dateCheckin).toISOString(),
+      date_checkout: new Date(formData.dateCheckout).toISOString(),
+      number_nights: formData.numberNights,
+      guests_id_guest: reservation ? reservation.guests_id_guest : client.idGuest, // Asegurarse de usar `client.id_guest` cuando no haya `reservation`
     };
 
-    try {
-        if (reservation) {
-            await updateReservation({ ...reservation, ...reservationData });
-            setSuccessMessage(`Reservation updated successfully for ${client.firstName}!`);
-        } else {
-            await addReservation(reservationData);
-            setSuccessMessage(`Reservation added successfully for ${client.firstName}!`);
-        }
-        setShowSuccessModal(true); // Mostrar modal de éxito
-    } catch (error) {
-        console.error('Error handling reservation:', error);
-        setErrorMessage('An error occurred while processing the reservation.');
-        setShowErrorModal(true); // Mostrar modal de error
-    }
-};
+    console.log("Sending reservation data to backend:", reservationData);
 
- 
+    try {
+      if (reservation) {
+        await updateReservation({ ...reservation, ...reservationData });
+        setSuccessMessage(`Reservation updated successfully for Guest ID: ${reservation.guests_id_guest}!`);
+      } else {
+        await addReservation(reservationData);
+        setSuccessMessage(`Reservation added successfully for Guest ID: ${client.id_guest}!`);
+      }
+
+      setShowSuccessModal(true);
+    } catch (error) {
+      console.error('Error handling reservation:', error);
+      setErrorMessage('An error occurred while processing the reservation.');
+      setShowErrorModal(true);
+    }
+  };
+
   const getAvailableRooms = (roomType) => {
     if (!roomType) return [];
 
@@ -218,7 +221,7 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
   };
 
   const handleCloseErrorModal = () => setShowErrorModal(false);
-  const handleCloseSuccessModal = () => setShowSuccessModal(false); // Only close the success modal
+  const handleCloseSuccessModal = () => setShowSuccessModal(false);
 
   return (
     <>
@@ -241,7 +244,7 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="dateCheckin" className="form-label">Check-In Date</label>
+              <label htmlFor="dateCheckin" className="form-label">Check-in Date</label>
               <input
                 type="date"
                 id="dateCheckin"
@@ -253,7 +256,7 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="dateCheckout" className="form-label">Check-Out Date</label>
+              <label htmlFor="dateCheckout" className="form-label">Check-out Date</label>
               <input
                 type="date"
                 id="dateCheckout"
@@ -272,34 +275,36 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
                 name="numberNights"
                 className="form-control"
                 value={formData.numberNights}
-                readOnly
+                onChange={handleChange}
+                disabled
               />
             </div>
+
             <div className="mb-3">
-              <h5>Rooms</h5>
-              {roomBlocks.map((block, index) => (
+              <label htmlFor="roomAssigned" className="form-label">Assigned Rooms</label>
+              {roomBlocks.map((roomBlock, index) => (
                 <div key={index} className="mb-3">
                   <select
-                    className="form-select"
-                    value={block.roomType}
+                    value={roomBlock.roomType}
                     onChange={(e) => handleRoomTypeChange(index, e.target.value)}
+                    className="form-control"
                   >
                     <option value="">Select Room Type</option>
-                    {roomTypes.map((roomType) => (
-                      <option key={roomType.id} value={roomType.id}>
-                        {roomType.name}
+                    {roomTypes.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.name}
                       </option>
                     ))}
                   </select>
 
-                  {block.roomType && (
+                  {roomBlock.roomType && (
                     <select
-                      className="form-select mt-2"
-                      value={block.roomAssigned}
+                      value={roomBlock.roomAssigned}
                       onChange={(e) => handleRoomChange(index, e.target.value)}
+                      className="form-control mt-2"
                     >
                       <option value="">Select Room</option>
-                      {getAvailableRooms(block.roomType).map((room) => (
+                      {getAvailableRooms(roomBlock.roomType).map((room) => (
                         <option key={room.id} value={room.id}>
                           {getRoomId(room.id)}
                         </option>
@@ -309,52 +314,50 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
 
                   <button
                     type="button"
-                    className="btn btn-danger mt-2"
                     onClick={() => handleRemoveRoom(index)}
+                    className="btn btn-danger mt-2"
                   >
                     Remove Room
                   </button>
                 </div>
               ))}
-
-              <button type="button" className="btn btn-primary" onClick={handleAddRoom}>
+              <button
+                type="button"
+                onClick={handleAddRoom}
+                className="btn btn-primary"
+              >
                 Add Room
               </button>
             </div>
 
-            <Button type="submit" variant="primary" className="mt-3">
+            <button type="submit" className="btn btn-success">
               {reservation ? 'Update Reservation' : 'Add Reservation'}
-            </Button>
+            </button>
           </form>
         </Modal.Body>
       </Modal>
 
+      {/* Error Modal */}
       <Modal show={showErrorModal} onHide={handleCloseErrorModal}>
         <Modal.Header closeButton>
           <Modal.Title>Error</Modal.Title>
         </Modal.Header>
         <Modal.Body>{errorMessage}</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseErrorModal}>
-            Close
-          </Button>
+          <Button variant="secondary" onClick={handleCloseErrorModal}>Close</Button>
         </Modal.Footer>
       </Modal>
 
-        {/* Modal de éxito */}
-        <Modal show={showSuccessModal} onHide={handleCloseSuccessModal} backdrop="static" keyboard={false}>
-          <Modal.Header closeButton>
-              <Modal.Title>Success</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-              {successMessage}
-          </Modal.Body>
-          <Modal.Footer>
-              <Button variant="secondary" onClick={handleCloseSuccessModal}>
-                  Close
-              </Button>
-          </Modal.Footer>
-</Modal>
+      {/* Success Modal */}
+      <Modal show={showSuccessModal} onHide={handleCloseSuccessModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Success</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{successMessage}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseSuccessModal}>Close</Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
