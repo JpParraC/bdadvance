@@ -19,42 +19,51 @@ import { cilLockLocked, cilUser } from '@coreui/icons';
 import '../../../css/styles.css';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [staffId, setStaffId] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  
+  // Establecer el tema de la página
   useEffect(() => {
-    localStorage.setItem('theme', 'light'); 
-    document.body.classList.remove('dark-theme'); 
-    document.body.classList.add('light-theme'); 
+    localStorage.setItem('theme', 'light');
+    document.body.classList.remove('dark-theme');
+    document.body.classList.add('light-theme');
   }, []);
 
+  // Función de login que se ejecuta al enviar el formulario
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // Convertir staffId a número
+    const staffIdInt = parseInt(staffId, 10); // Convierte el staff_id a entero
+
+    if (isNaN(staffIdInt)) {
+      setErrorMessage('Staff ID debe ser un número válido');
+      return;
+    }
+
+    console.log('Datos enviados al backend:', { staffId: staffIdInt, password });
+
     try {
-     
-      const response = await axios.get('http://localhost:3001/admins');
-      const admins = response.data;
-      console.log(admins);
+      // Hacer POST al backend para verificar las credenciales
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
+        staff_id: staffIdInt, // Enviar como número entero
+        password,
+      });
 
-     
-      const user = admins.find(
-        (admin) => admin.username === username && admin.password === password
-      );
+      console.log('Login exitoso:', response.data); // Verifica la respuesta del backend
+      // Si la respuesta es exitosa, guarda el token en localStorage
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
 
-      if (user) {
-        // Guardar en Local Storage
-        localStorage.setItem('adminUser', JSON.stringify(user));
-
-        // Redireccionar al dashboard o página principal
+        // Redirecciona al dashboard
         navigate('/dashboard');
       } else {
-        setErrorMessage('Invalid username or password');
+        setErrorMessage('Invalid staff ID or password');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login error:', error.response ? error.response.data : error);
       setErrorMessage('Something went wrong. Please try again.');
     }
   };
@@ -80,10 +89,10 @@ const Login = () => {
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Username"
-                        autoComplete="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Staff ID"
+                        autoComplete="staff-id"
+                        value={staffId}
+                        onChange={(e) => setStaffId(e.target.value)}
                       />
                     </CInputGroup>
 

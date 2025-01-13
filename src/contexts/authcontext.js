@@ -1,32 +1,48 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getPermissionsFromRole } from "../permissions"; // Asegúrate de importar correctamente esta función
+import { getPermissionsFromRole } from "../permissions"; // Asegúrate de que esta función esté bien implementada
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null); // Estado para el token JWT
 
-  // Cargar el usuario desde localStorage al iniciar la aplicación
+  // Cargar usuario y token desde localStorage al iniciar la aplicación
   useEffect(() => {
     const storedUser = localStorage.getItem("adminUser");
-    if (storedUser) {
+    const storedToken = localStorage.getItem("authToken");
+    if (storedUser && storedToken) {
       const parsedUser = JSON.parse(storedUser);
       setUser({
         ...parsedUser,
-        permissions: getPermissionsFromRole(parsedUser.role), // Calcula permisos basados en su rol
+        permissions: [] // Inicializamos vacío los permisos
+      });
+      setToken(storedToken);
+
+      // Cargar los permisos del rol del usuario desde el backend
+      getPermissionsFromRole(parsedUser.role_id).then(permissions => {
+        setUser(prevUser => ({
+          ...prevUser,
+          permissions
+        }));
       });
     }
   }, []);
 
-  const login = (userData) => {
+  const login = (userData, token) => {
     // Asigna los permisos al usuario según su rol
-    const userWithPermissions = {
-      ...userData,
-      permissions: getPermissionsFromRole(userData.role),
-    };
+    getPermissionsFromRole(userData.role_id).then(permissions => {
+      const userWithPermissions = {
+        ...userData,
+        permissions
+      };
 
-    setUser(userWithPermissions);
-    localStorage.setItem("adminUser", JSON.stringify(userWithPermissions)); // Guardar usuario con permisos en localStorage
+      // Guardar el usuario y el token en el localStorage
+      setUser(userWithPermissions);
+      setToken(token);
+      localStorage.setItem("adminUser", JSON.stringify(userWithPermissions));
+      localStorage.setItem("authToken", token);
+    });
   };
 
   const logout = () => {
@@ -36,15 +52,13 @@ export const AuthProvider = ({ children }) => {
       console.log("Sesión finalizada");
     }
     setUser(null);
+    setToken(null);
     localStorage.removeItem("adminUser");
-    
-    
+    localStorage.removeItem("authToken");
   };
-  
-  
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

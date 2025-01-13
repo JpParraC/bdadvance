@@ -1,26 +1,16 @@
 // permissions.js
 
-// Objeto que define los permisos asignados a cada rol
-const rolePermissions = {
-  superadmin: ["manage_clients", "view_rooms", "view_dashboard","manage_admins", "view_staff" ,"manage_tasks", "view_invoice", "view_calendar","manage_reservations"],
-  reader: ["view_all"],
-  receptionist: ["manage_clients"],
-};
-
+// Verificar si un usuario tiene un permiso específico
 export const hasPermission = (user, requiredPermission) => {
   if (!user) {
     return false;
   }
 
-  // Combina permisos del usuario y los de su rol
-  const rolePermissions = getPermissionsFromRole(user.role);
+  // Asegúrate de que los permisos estén disponibles en el usuario
   const userPermissions = user.permissions || [];
 
-  const allPermissions = [...new Set([...rolePermissions, ...userPermissions])];
-
-  return allPermissions.includes(requiredPermission);
+  return userPermissions.includes(requiredPermission);
 };
-
 
 // Verificar si un usuario tiene un rol específico
 export const hasRole = (user, role) => {
@@ -28,7 +18,14 @@ export const hasRole = (user, role) => {
   return user.role === role;
 };
 
-// Obtener los permisos asociados a un rol
-export const getPermissionsFromRole = (role) => {
-  return rolePermissions[role] || [];
+// Obtener los permisos asociados a un rol, si es necesario llamar al backend para obtenerlos
+export const getPermissionsFromRole = async (role_id) => {
+  try {
+    // Aquí llamamos al backend para obtener los permisos según el rol
+    const response = await axios.get(`http://localhost:3001/roles/${role_id}/permissions`);
+    return response.data.permissions || [];
+  } catch (error) {
+    console.error("Error fetching role permissions:", error);
+    return [];
+  }
 };
