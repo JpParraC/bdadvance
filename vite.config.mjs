@@ -28,6 +28,7 @@ export default defineConfig(() => {
     },
     optimizeDeps: {
       force: true,
+      include: ['jwt-decode'], // Añadido para incluir jwt-decode en la optimización
       esbuildOptions: {
         loader: {
           '.js': 'jsx',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import jwt_decode from 'jwt-decode'; // Importa jwt-decode
 import {
   CButton,
   CCard,
@@ -50,23 +51,55 @@ const Login = () => {
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         staff_id: staffIdInt, // Enviar como número entero
         password,
+        
       });
 
       console.log('Login exitoso:', response.data); // Verifica la respuesta del backend
+
       // Si la respuesta es exitosa, guarda el token en localStorage
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+        const token = response.data.token;
+        localStorage.setItem('token', token);
+        console.log('Token guardado en localStorage:', token); // Verifica que el token se haya guardado
 
-        // Redirecciona al dashboard
-        navigate('/dashboard');
+        // Decodificar el token JWT
+        const decodedToken = jwt_decode(token); // Decodifica el token
+        console.log('Token decodificado:', decodedToken); // Agrega log para ver los datos del token
+
+        const { role_id, permissions } = decodedToken; // Obtiene el role_id y permissions del token decodificado
+        console.log('Role ID:', role_id); // Verifica el role_id
+        console.log('Permisos del usuario:', permissions); // Verifica los permisos
+
+        // Crear el objeto de usuario
+        const user = {
+          staffId: staffIdInt,
+          role_id,
+          permissions,  // Asumiendo que el token contiene los permisos
+        };
+
+        // Guardar el objeto completo en localStorage
+        localStorage.setItem('user', JSON.stringify(user));
+        console.log('Usuario guardado en localStorage:', user); // Verifica que el objeto de usuario se haya guardado
+
+        // Redirigir al usuario según su role_id
+        if (role_id === 1) {
+          console.log('Redirigiendo a dashboard');
+          navigate('/dashboard'); // Redirigir a dashboard si es administrador
+        } else if (role_id === 2) {
+          console.log('Redirigiendo a clients');
+          navigate('/clients'); // Redirigir a clients si es recepcionista
+        } else {
+          setErrorMessage('Rol desconocido. No se puede redirigir.');
+        }
       } else {
         setErrorMessage('Invalid staff ID or password');
       }
     } catch (error) {
+      // Log de error más detallado
       console.error('Login error:', error.response ? error.response.data : error);
       setErrorMessage('Something went wrong. Please try again.');
     }
-  };
+  }
 
   return (
     <div className="login-background d-flex flex-row align-items-center">

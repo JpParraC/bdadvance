@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getPermissionsFromRole } from "../permissions"; // Asegúrate de que esta función esté bien implementada
+import jwt_decode from 'jwt-decode';
+
+ // Necesitamos esta librería para decodificar el token
 
 const AuthContext = createContext();
 
@@ -11,38 +13,35 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("adminUser");
     const storedToken = localStorage.getItem("authToken");
+
     if (storedUser && storedToken) {
-      const parsedUser = JSON.parse(storedUser);
+      const decodedToken = jwt_decode(storedToken); // Decodificar el token
+      const permissions = decodedToken.permissions || []; // Obtener los permisos desde el token
+
       setUser({
-        ...parsedUser,
-        permissions: [] // Inicializamos vacío los permisos
+        ...decodedToken,
+        permissions, // Asignar los permisos del token
       });
       setToken(storedToken);
-
-      // Cargar los permisos del rol del usuario desde el backend
-      getPermissionsFromRole(parsedUser.role_id).then(permissions => {
-        setUser(prevUser => ({
-          ...prevUser,
-          permissions
-        }));
-      });
     }
   }, []);
 
   const login = (userData, token) => {
-    // Asigna los permisos al usuario según su rol
-    getPermissionsFromRole(userData.role_id).then(permissions => {
-      const userWithPermissions = {
-        ...userData,
-        permissions
-      };
+    // Decodificamos el token para obtener los permisos
+    const decodedToken = jwt_decode(token);
+    const permissions = decodedToken.permissions || [];
 
-      // Guardar el usuario y el token en el localStorage
-      setUser(userWithPermissions);
-      setToken(token);
-      localStorage.setItem("adminUser", JSON.stringify(userWithPermissions));
-      localStorage.setItem("authToken", token);
-    });
+    // Asignamos los permisos al usuario
+    const userWithPermissions = {
+      ...userData,
+      permissions,
+    };
+
+    // Guardamos el usuario y el token en el localStorage
+    setUser(userWithPermissions);
+    setToken(token);
+    localStorage.setItem("adminUser", JSON.stringify(userWithPermissions));
+    localStorage.setItem("authToken", token);
   };
 
   const logout = () => {

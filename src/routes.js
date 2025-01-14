@@ -71,7 +71,7 @@ const routes = [
     path: '/dashboard', 
     name: 'Dashboard', 
     element: () => (
-      <ProtectedRoute requiredPermission="view_dashboard">
+      <ProtectedRoute >
         <Dashboard />
       </ProtectedRoute>
     )
