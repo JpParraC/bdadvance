@@ -64,30 +64,37 @@ const RoomCalendar = () => {
     const availability = {};
 
     // Verificamos la disponibilidad de cada habitación
-    for (const room of rooms) {
+    rooms.forEach((room) => {
       const isAvailable = checkRoomAvailability(room.id, checkin, checkout);
       availability[room.id] = isAvailable; // Guardamos la disponibilidad por habitación
-    }
+    });
 
     setRoomAvailability(availability); // Actualizamos el estado con la disponibilidad de todas las habitaciones
   };
 
   const handleDateChange = (date) => {
     setValue(date); // Establecer la fecha seleccionada
-    fetchRoomAvailability(date); // Realizar la verificación de disponibilidad cuando se cambia la fecha
   };
 
-  // useEffect para cargar habitaciones al iniciar el componente
+  // useEffect para cargar habitaciones y realizar la verificación de disponibilidad en la fecha inicial
   useEffect(() => {
-    fetchRooms(); // Cargar habitaciones al iniciar
-  }, []);
+    const fetchData = async () => {
+      await fetchRooms(); // Cargar habitaciones
+    };
 
-  // useEffect para obtener las reservas y verificar la disponibilidad en la fecha seleccionada
+    fetchData(); // Ejecutar la carga de datos al montar el componente
+  }, []); // Solo se ejecuta una vez cuando el componente se monta
+
+  // useEffect para cargar reservas y verificar la disponibilidad de la fecha actual
   useEffect(() => {
-    if (rooms.length > 0) { // Solo buscar disponibilidad cuando las habitaciones estén cargadas
-      fetchReservationsForDateRange(value, new Date(value).setDate(value.getDate() + 1)); // Verificamos las reservas para la fecha seleccionada
+    if (rooms.length > 0) {
+      const checkin = value.toISOString();
+      const checkout = new Date(value);
+      checkout.setDate(checkout.getDate() + 1); // Sumar un día para el checkout
+      fetchReservationsForDateRange(checkin, checkout); // Cargar reservas
+      fetchRoomAvailability(value); // Verificar disponibilidad de habitaciones para la fecha actual
     }
-  }, [rooms, value]); // Ejecuta cada vez que se cargan las habitaciones o cambia la fecha
+  }, [rooms, value]); // Ejecuta cuando cambian las habitaciones o la fecha
 
   // Función para mostrar detalles de la habitación cuando está ocupada
   const renderRoomDetails = (roomId) => {
@@ -180,10 +187,10 @@ const RoomCalendar = () => {
               style={{ padding: '10px' }}
             > 
               <OverlayTrigger
-                trigger="hover"
+                trigger={['hover', 'focus']}
                 placement="top"
                 overlay={
-                  <Popover id={`popover-${room.id}`} className="custom-popover"> {/* Agregamos la clase personalizada */}
+                  <Popover id={`popover-${room.id}`} className="custom-popover">
                     <Popover.Header as="h3">Room {room.id}</Popover.Header>
                     <Popover.Body>
                       {roomAvailability[room.id] ? (
@@ -217,15 +224,11 @@ const RoomCalendar = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     padding: '0',
-                    margin: '0',
+                    margin: '5px',
                   }}
                 >
-                  <FontAwesomeIcon 
-                    icon={faDoorOpen} 
-                    size="1x" 
-                    className="mb-3" 
-                  />
-                  <div style={{ fontSize: '10px', marginTop: '2px' }}>{room.name || `Room ${room.id}`}</div>
+                  <FontAwesomeIcon icon={faDoorOpen} size="2x" />
+                  <div>Room {room.id}</div>
                 </div>
               </OverlayTrigger>
             </CCol>

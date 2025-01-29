@@ -5,88 +5,6 @@ import CIcon from '@coreui/icons-react';
 import { cilPen, cilTrash, cilPlus, cilZoom } from '@coreui/icons';
 import '../../css/styles.css';
 
-const PaymentTable = ({ payments }) => (
-  <div>
-    <h3 className="bl">Payments</h3>
-    <table className="custom-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Date Invoice</th>
-          <th>Amount</th>
-          <th>Reservation ID</th>
-          <th>Client ID</th>
-          <th>Notes</th>
-          <th>Time</th>
-          <th>Payment Method</th>
-        </tr>
-      </thead>
-      <tbody>
-        {payments.map((payment) => (
-          <tr key={payment.id}>
-            <td>{payment.id}</td>
-            <td>{payment.dateInvoice}</td>
-            <td>{payment.amount}</td>
-            <td>{payment.id_reservation}</td>
-            <td>{payment.idClient}</td>
-            <td>{payment.notes}</td>
-            <td>{payment.time}</td>
-            <td>{payment.paymentMethod}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
-
-const InvoiceTable = ({ invoices = [], onAddPayment, onViewDetails }) => (
-  <div>
-    <h3 className="bl">Invoices</h3>
-    <table className="custom-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Reservation ID</th>
-          <th>Total Amount</th>
-          <th>Date</th>
-          <th>Payment IDs</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {invoices.map((invoice) => (
-          <tr key={invoice.id}>
-            <td>{invoice.id}</td>
-            <td>{invoice.reservationId || 'N/A'}</td>
-            <td>{invoice.totalAmount}</td>
-            <td>{invoice.date}</td>
-            <td>{invoice.paymentIds?.join(', ') || 'N/A'}</td>
-            <td>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                <Button
-                  variant="link"
-                  title="Add Payment"
-                  style={{ textDecoration: 'none', padding: '5px' }}
-                  onClick={() => onAddPayment(invoice)}
-                >
-                  <CIcon icon={cilPlus} style={{ fontSize: '1.5rem', color: 'green' }} />
-                </Button>
-                <Button
-                  variant="link"
-                  title="View"
-                  style={{ textDecoration: 'none', padding: '5px' }}
-                  onClick={() => onViewDetails(invoice)}
-                >
-                  <CIcon icon={cilZoom} style={{ fontSize: '1.5rem', color: 'blue' }} />
-                </Button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
 
 const Invoice = () => {
   const [payments, setPayments] = useState([]);
@@ -136,7 +54,7 @@ const Invoice = () => {
       paymentIds: [],
     };
 
-    axios.post('http://localhost:3001/invoices', newInvoice)
+    axios.post('http://localhost:5000/api/invoices/', newInvoice)
       .then((response) => {
         setInvoices((prevInvoices) => [...prevInvoices, response.data]);
         setShowInvoiceForm(false);
@@ -165,7 +83,7 @@ const Invoice = () => {
       paymentMethod: form.paymentMethod.value,
     };
 
-    axios.post('http://localhost:3001/payments', newPayment)
+    axios.post('http://localhost:5000/api/payments/', newPayment)
       .then(() => {
         setPayments((prevPayments) => [...prevPayments, newPayment]);
 
@@ -175,7 +93,7 @@ const Invoice = () => {
           paymentIds: [...selectedInvoice.paymentIds, newPayment.id],
         };
 
-        axios.put(`http://localhost:3001/invoices/${selectedInvoice.id}`, updatedInvoice)
+        axios.put(`http://localhost:5000/api/invoices/${selectedInvoice.id}`, updatedInvoice)
           .then(() => {
             setInvoices((prevInvoices) =>
               prevInvoices.map((inv) => (inv.id === updatedInvoice.id ? updatedInvoice : inv))
@@ -207,11 +125,11 @@ const Invoice = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const paymentResponse = await axios.get('http://localhost:3001/payments');
-        const invoiceResponse = await axios.get('http://localhost:3001/invoices');
-        const reservationResponse = await axios.get('http://localhost:3001/reservations');
-        const clientResponse = await axios.get('http://localhost:3001/clients');
-        const roomTypeResponse = await axios.get('http://localhost:3001/room_types');
+        const paymentResponse = await axios.get('http://localhost:5000/api/payments/');
+        const invoiceResponse = await axios.get('http://localhost:5000/api/invoices/');
+        const reservationResponse = await axios.get('http://localhost:5000/api/reservations/');
+        const clientResponse = await axios.get('http://localhost:5000/api/users/');
+        const roomTypeResponse = await axios.get('http://localhost:5000/api/roomtypes/');
         setPayments(paymentResponse.data || []);
         setInvoices(invoiceResponse.data || []);
         setReservations(reservationResponse.data || []);
@@ -365,5 +283,90 @@ const Invoice = () => {
     </div>
   );
 };
+
+
+const PaymentTable = ({ payments }) => (
+  <div>
+    <h3 className="bl">Payments</h3>
+    <table className="custom-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>ID Invoice</th>
+          <th>Amount</th>
+          <th>Reservation ID</th>
+          <th>Client ID</th>
+          <th>Notes</th>
+          <th>Time</th>
+          <th>Payment Method</th>
+        </tr>
+      </thead>
+      <tbody>
+        {payments.map((payment) => (
+          <tr key={payment.id}>
+            <td>{payment.id}</td>
+            <td>{payment.invoice_id}</td>
+            <td>{payment.mount}</td>
+            <td>{payment.id_reservation}</td>
+            <td>{payment.idClient}</td>
+            <td>{payment.notes}</td>
+            <td>{payment.time}</td>
+            <td>{payment.id_payment_method}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+const InvoiceTable = ({ invoices = [], onAddPayment, onViewDetails }) => (
+  <div>
+    <h3 className="bl">Invoices</h3>
+    <table className="custom-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Reservation ID</th>
+          <th>Total Amount</th>
+          <th>Date</th>
+          <th>Payment IDs</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {invoices.map((invoice) => (
+          <tr key={invoice.id}>
+            <td>{invoice.id}</td>
+            <td>{invoice.reservation_id || 'N/A'}</td>
+            <td>{invoice.total_amount}</td>
+            <td>{invoice.date_invoice}</td>
+            <td>{invoice.paymentIds?.join(', ') || 'N/A'}</td>
+            <td>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                <Button
+                  variant="link"
+                  title="Add Payment"
+                  style={{ textDecoration: 'none', padding: '5px' }}
+                  onClick={() => onAddPayment(invoice)}
+                >
+                  <CIcon icon={cilPlus} style={{ fontSize: '1.5rem', color: 'green' }} />
+                </Button>
+                <Button
+                  variant="link"
+                  title="View"
+                  style={{ textDecoration: 'none', padding: '5px' }}
+                  onClick={() => onViewDetails(invoice)}
+                >
+                  <CIcon icon={cilZoom} style={{ fontSize: '1.5rem', color: 'blue' }} />
+                </Button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
 
 export default Invoice;

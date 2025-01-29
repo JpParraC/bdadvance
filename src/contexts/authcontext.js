@@ -1,66 +1,92 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import jwt_decode from 'jwt-decode';
+import jwt_decode from "jwt-decode";
+import axios from "axios";
 
- // Necesitamos esta librería para decodificar el token
-
+// Crear contexto para autenticación
 const AuthContext = createContext();
 
+// Proveedor del contexto de autenticación
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null); // Estado para el token JWT
+  const [accessToken, setAccessToken] = useState(null);
+  const [loading, setLoading] = useState(true); // Para manejar la carga inicial
 
-  // Cargar usuario y token desde localStorage al iniciar la aplicación
+  // Cargar usuario y accessToken desde localStorage al iniciar la aplicación
   useEffect(() => {
-    const storedUser = localStorage.getItem("adminUser");
-    const storedToken = localStorage.getItem("authToken");
+    const loadSession = async () => {
+      try {
+        const storedAccessToken = localStorage.getItem("token");
 
-    if (storedUser && storedToken) {
-      const decodedToken = jwt_decode(storedToken); // Decodificar el token
-      const permissions = decodedToken.permissions || []; // Obtener los permisos desde el token
+        if (storedAccessToken) {
+          const decodedToken = jwt_decode(storedAccessToken);
 
-      setUser({
-        ...decodedToken,
-        permissions, // Asignar los permisos del token
-      });
-      setToken(storedToken);
-    }
-  }, []);
+          if (decodedToken.exp * 1000 < Date.now()) {
+            console.warn("El token ha expirado. Redirigiendo a login...");
+            logout(); // Si el token ha expirado, cierra sesión
+          } else {
+            setAccessToken(storedAccessToken);
+            setUser({
+              staff_id: decodedToken.staff_id,
+              role_id: decodedToken.role_id,
+              permissions: decodedToken.permissions || [],
+            });
+          }
+        }
 
-  const login = (userData, token) => {
-    // Decodificamos el token para obtener los permisos
-    const decodedToken = jwt_decode(token);
-    const permissions = decodedToken.permissions || [];
-
-    // Asignamos los permisos al usuario
-    const userWithPermissions = {
-      ...userData,
-      permissions,
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al cargar la sesión:", error);
+        logout();
+        setLoading(false);
+      }
     };
 
-    // Guardamos el usuario y el token en el localStorage
-    setUser(userWithPermissions);
-    setToken(token);
-    localStorage.setItem("adminUser", JSON.stringify(userWithPermissions));
-    localStorage.setItem("authToken", token);
-  };
+    loadSession();
+  }, []);
 
-  const logout = () => {
-    console.log("Logout llamado");
-    if (user) {
-      console.log(`Usuario que cerró sesión: ${JSON.stringify(user)}`);
-      console.log("Sesión finalizada");
+  // Función para iniciar sesión
+  const login = (newAccessToken) => {
+    try {
+      // Decodificar el accessToken
+      const decodedToken = jwt_decode(newAccessToken);
+
+      // Validar la estructura del token
+      if (!decodedToken.staff_id || !decodedToken.role_id) {
+        throw new Error("El token no contiene información válida");
+      }
+
+      // Actualizar el estado del usuario y el accessToken
+      const userWithRoles = {
+        staff_id: decodedToken.staff_id,
+        role_id: decodedToken.role_id,
+        permissions: decodedToken.permissions || [],
+      };
+
+      setUser(userWithRoles);
+      setAccessToken(newAccessToken);
+      localStorage.setItem("token", newAccessToken); // Solo guardamos el accessToken
+    } catch (error) {
+      console.error("Error al procesar el accessToken:", error);
+      logout();
     }
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem("adminUser");
-    localStorage.removeItem("authToken");
   };
 
+  // Función para cerrar sesión
+  const logout = () => {
+    setUser(null);
+    setAccessToken(null);
+    localStorage.removeItem("token"); // Eliminar el accessToken
+    localStorage.removeItem("user"); // Eliminar el usuario
+    console.log("Sesión cerrada correctamente");
+  };
+
+  // Exponer el estado y funciones
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, accessToken, login, logout }}>
+      {loading ? <div>Loading...</div> : children} {/* Muestra un indicador de carga mientras se valida la sesión */}
     </AuthContext.Provider>
   );
 };
 
+// Hook para usar el contexto de autenticación
 export const useAuth = () => useContext(AuthContext);

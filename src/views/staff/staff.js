@@ -10,8 +10,6 @@ const Staff = () => {
   const [roles, setRoles] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editStaff, setEditStaff] = useState(null);
-  const [staffIdFilter, setStaffIdFilter] = useState('');
-  const [roleFilter, setRoleFilter] = useState(''); // Estado para el filtro por rol
 
   // Estados para los modales de confirmación
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -19,29 +17,15 @@ const Staff = () => {
   const [staffToDelete, setStaffToDelete] = useState(null);
   const [staffToEdit, setStaffToEdit] = useState(null);
 
-  // Obtener datos del API
+  // Obtener datos de la API
   const fetchStaff = () => {
-    axios.get('http://localhost:3001/staff')
+    axios.get('http://localhost:5000/api/staff')
       .then(response => setStaff(response.data))
       .catch(error => console.error("Error loading staff:", error));
   };
 
-  const fetchRoles = () => {
-    axios.get('http://localhost:3001/rol_staff')
-      .then(response => setRoles(response.data))
-      .catch(error => console.error("Error loading roles:", error));
-  };
-
-  // Filtrar staff por ID, Cédula y Rol
-  const filteredStaff = staff.filter(member => {
-    const matchesId = (member.cedula && member.cedula.includes(staffIdFilter)) || member.id.includes(staffIdFilter);
-    const matchesRole = roleFilter === '' || String(member.rol_staff_id) === roleFilter;
-    return matchesId && matchesRole;
-  });
-
   useEffect(() => {
     fetchStaff();
-    fetchRoles();
   }, []);
 
   // Manejo del formulario
@@ -56,7 +40,7 @@ const Staff = () => {
 
   const addStaff = (newStaff) => {
     const { id, ...staffWithoutId } = newStaff;
-    axios.post('http://localhost:3001/staff', staffWithoutId)
+    axios.post('http://localhost:5000/api/staff', staffWithoutId)
       .then(response => {
         setStaff([...staff, response.data]);
         setShowForm(false);
@@ -65,7 +49,7 @@ const Staff = () => {
   };
 
   const updateStaff = (updatedStaff) => {
-    axios.put(`http://localhost:3001/staff/${updatedStaff.id}`, updatedStaff)
+    axios.put(`http://localhost:5000/api/staff/${updatedStaff.id}`, updatedStaff)
       .then(response => {
         const updatedList = staff.map(member => 
           member.id === updatedStaff.id ? response.data : member
@@ -76,7 +60,7 @@ const Staff = () => {
       .catch(error => console.error("Error updating staff:", error));
   };
 
-  // Confirmar eliminación
+  // Confirmación de eliminación
   const confirmDelete = (member) => {
     setStaffToDelete(member);
     setShowDeleteModal(true);
@@ -84,7 +68,7 @@ const Staff = () => {
 
   const deleteStaff = () => {
     if (staffToDelete) {
-      axios.delete(`http://localhost:3001/staff/${staffToDelete.id}`)
+      axios.delete(`http://localhost:5000/api/staff/${staffToDelete.id}`)
         .then(() => {
           setStaff(staff.filter(member => member.id !== staffToDelete.id));
           setShowDeleteModal(false);
@@ -94,7 +78,7 @@ const Staff = () => {
     }
   };
 
-  // Confirmar edición
+  // Confirmación de edición
   const confirmEdit = (member) => {
     setStaffToEdit(member);
     setShowEditModal(true);
@@ -115,28 +99,11 @@ const Staff = () => {
   return (
     <div>
       <h2>Staff Management</h2>
+
+      {/* Botón para agregar personal */}
       <Button variant="dark" onClick={handleOpenForm}>Add Staff</Button>
 
-      <input 
-        type="text"
-        placeholder="Filter by ID or Cedula"
-        value={staffIdFilter}
-        onChange={(e) => setStaffIdFilter(e.target.value)}
-        style={{ marginLeft: '10px', padding: '5px' }}
-      />
-
-      {/* Filtro por Rol */}
-      <Form.Select 
-        value={roleFilter}
-        onChange={(e) => setRoleFilter(e.target.value)}
-        style={{ marginLeft: '10px', width: '200px', display: 'inline-block' }}
-      >
-        <option value="">Filter by Role</option>
-        {roles.map(role => (
-          <option key={role.id} value={role.id}>{role.role}</option>
-        ))}
-      </Form.Select>
-
+      {/* Tabla de Staff */}
       <div className="table-responsive mt-3">
         <Table striped bordered hover>
           <thead>
@@ -152,16 +119,16 @@ const Staff = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredStaff.map((member) => {
+            {staff.map((member) => {
               const role = rolesById[member.rol_staff_id];
               return (
                 <tr className="text-center" key={member.id}>
                   <td>{member.id}</td>
-                  <td>{member.firstName}</td>
-                  <td>{member.lastName}</td>
-                  <td>{member.email}</td>
+                  <td>{member.name_staff}</td>
+                  <td>{member.lastname_staff}</td>
+                  <td>{member.email_staff}</td>
                   <td>{member.phone}</td>
-                  <td>{role?.role || "Unassigned"}</td>
+                  <td>{role?.role_id|| "Unassigned"}</td>
                   <td>{member.status}</td>
                   <td>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>

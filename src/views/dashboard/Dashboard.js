@@ -17,22 +17,22 @@ const Dashboard = () => {
   const [pendingTasks, setPendingTasks] = useState(0)
 
   useEffect(() => {
-    axios.get('http://localhost:3001/clients')
+    axios.get('http://localhost:5000/api/users')
       .then((response) => setClients(response.data))
       .catch((error) => console.error('Error fetching clients data:', error))
 
-    axios.get('http://localhost:3001/rooms')
+    axios.get('http://localhost:5000/api/rooms')
       .then((response) => setRooms(response.data))
       .catch((error) => console.error('Error fetching rooms data:', error))
 
-    axios.get('http://localhost:3001/reservations')
+    axios.get('http://localhost:5000/api/reservations')
       .then((response) => {
         setReservations(response.data)
         processReservations(response.data)
       })
       .catch((error) => console.error('Error fetching reservations data:', error))
 
-    axios.get('http://localhost:3001/staff')
+    axios.get('http://localhost:5000/api/staff')
       .then((response) => setStaff(response.data))
       .catch((error) => console.error('Error fetching staff data:', error))
 
@@ -43,13 +43,24 @@ const Dashboard = () => {
 
   // Procesar las reservas para contar por fecha
   const processReservations = (reservations) => {
-    const dateCounts = {}
-    reservations.forEach((reservation) => {
-      const date = reservation.dateReserve
-      dateCounts[date] = (dateCounts[date] || 0) + 1
-    })
-    setReservationData(dateCounts)
-  }
+  const dateCounts = {}
+
+  reservations.forEach((reservation) => {
+    const date = reservation.date_reserve
+    dateCounts[date] = (dateCounts[date] || 0) + 1
+  })
+
+  // Ordenar las fechas
+  const sortedDates = Object.keys(dateCounts).sort((a, b) => new Date(a) - new Date(b))
+
+  // Crear un nuevo objeto con las fechas ordenadas
+  const sortedData = {}
+  sortedDates.forEach((date) => {
+    sortedData[date] = dateCounts[date]
+  })
+
+  setReservationData(sortedData)
+}
 
   // Procesar tareas para contar completadas y pendientes
   const processTasks = (tasks) => {
@@ -62,13 +73,13 @@ const Dashboard = () => {
 
   // Datos del gráfico de reservas
   const chartData = {
-    labels: Object.keys(reservationData),
+    labels: Object.keys(reservationData).map((date) => new Date(date).toLocaleDateString()), // Formateo de fecha legible
     datasets: [
       {
         label: 'Reservations',
         data: Object.values(reservationData),
-        backgroundColor: 'rgba(54, 162, 235, 0.7)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(54, 162, 235, 0.7)', // Color de fondo para las barras
+        borderColor: 'rgba(54, 162, 235, 1)', // Color del borde de las barras
         borderWidth: 1,
       },
     ],
@@ -79,10 +90,25 @@ const Dashboard = () => {
     scales: {
       x: {
         title: { display: true, text: 'Date' },
+        ticks: {
+          autoSkip: true, // Para evitar que las etiquetas de fechas se amontonen
+          maxRotation: 45, // Rotar las etiquetas si es necesario
+          minRotation: 30, // Mantener la rotación mínima para mayor legibilidad
+        },
       },
       y: {
         beginAtZero: true,
         title: { display: true, text: 'Number of Reservations' },
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          // Formatear la fecha en el tooltip
+          label: function (tooltipItem) {
+            return `Reservations: ${tooltipItem.raw}`;
+          },
+        },
       },
     },
   }

@@ -35,72 +35,72 @@ const Login = () => {
   // Función de login que se ejecuta al enviar el formulario
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    // Convertir staffId a número
+  
+    console.log('Formulario enviado');
+  
     const staffIdInt = parseInt(staffId, 10); // Convierte el staff_id a entero
-
+  
     if (isNaN(staffIdInt)) {
       setErrorMessage('Staff ID debe ser un número válido');
       return;
     }
-
+  
     console.log('Datos enviados al backend:', { staffId: staffIdInt, password });
-
+  
     try {
-      // Hacer POST al backend para verificar las credenciales
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         staff_id: staffIdInt, // Enviar como número entero
         password,
-        
       });
-
-      console.log('Login exitoso:', response.data); // Verifica la respuesta del backend
-
-      // Si la respuesta es exitosa, guarda el token en localStorage
-      if (response.data.token) {
-        const token = response.data.token;
+  
+      console.log('Respuesta del backend:', response);
+  
+      if (response.data && response.data.accessToken) {
+        const token = response.data.accessToken; // Acceder al token
         localStorage.setItem('token', token);
-        console.log('Token guardado en localStorage:', token); // Verifica que el token se haya guardado
-
+        console.log('Token guardado en localStorage:', token);
+  
         // Decodificar el token JWT
-        const decodedToken = jwt_decode(token); // Decodifica el token
-        console.log('Token decodificado:', decodedToken); // Agrega log para ver los datos del token
-
-        const { role_id, permissions } = decodedToken; // Obtiene el role_id y permissions del token decodificado
-        console.log('Role ID:', role_id); // Verifica el role_id
-        console.log('Permisos del usuario:', permissions); // Verifica los permisos
-
-        // Crear el objeto de usuario
-        const user = {
-          staffId: staffIdInt,
-          role_id,
-          permissions,  // Asumiendo que el token contiene los permisos
-        };
-
+        const decodedToken = jwt_decode(token);
+        console.log('Token decodificado:', decodedToken); 
+        console.log('Permisos del token decodificado:', decodedToken.permissions);
+  
+        const { id, role_id, permissions } = decodedToken;
+        console.log('Role ID:', role_id);
+        console.log('Permisos del usuario:', permissions);
+  
+        if (!permissions) {
+          setErrorMessage('No se encontraron permisos en el token');
+          return;
+        }
+  
         // Guardar el objeto completo en localStorage
+        const user = { id, staffId: staffIdInt, role_id, permissions };
         localStorage.setItem('user', JSON.stringify(user));
-        console.log('Usuario guardado en localStorage:', user); // Verifica que el objeto de usuario se haya guardado
-
-        // Redirigir al usuario según su role_id
-        if (role_id === 1) {
-          console.log('Redirigiendo a dashboard');
-          navigate('/dashboard'); // Redirigir a dashboard si es administrador
-        } else if (role_id === 2) {
-          console.log('Redirigiendo a clients');
-          navigate('/clients'); // Redirigir a clients si es recepcionista
+        console.log('Usuario guardado en localStorage:', user);
+  
+        // Verificación de permisos antes de redirigir
+        if (permissions) {
+          if (role_id === 1) {
+            navigate('/dashboard');
+          } else if (role_id === 2) {
+            navigate('/clients');
+          } else {
+            setErrorMessage('Rol desconocido. No se puede redirigir.');
+          }
         } else {
-          setErrorMessage('Rol desconocido. No se puede redirigir.');
+          setErrorMessage('No tienes permisos suficientes para acceder a esta página.');
         }
       } else {
-        setErrorMessage('Invalid staff ID or password');
+        setErrorMessage('ID de usuario o contraseña inválidos');
       }
+      window.location.reload();
     } catch (error) {
-      // Log de error más detallado
-      console.error('Login error:', error.response ? error.response.data : error);
-      setErrorMessage('Something went wrong. Please try again.');
+      console.error('Error en login:', error);
+      setErrorMessage('Ocurrió un error, por favor intente nuevamente.');
     }
-  }
-
+  };
+  
   return (
     <div className="login-background d-flex flex-row align-items-center">
       <CContainer>

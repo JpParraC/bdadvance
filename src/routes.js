@@ -63,6 +63,8 @@ const Task = React.lazy(() => import('./views/task/task'));
 const Invoice = React.lazy(() => import('./views/invoice/invoice'));
 const Unauthorized = React.lazy(() => import('./views/pages/Unauthorized/Unauthorized'));
 const Reservation = React.lazy(() => import('./views/reservation/reservation'));
+const MyProfile = React.lazy(() => import('./views/myprofile/myprofile'));
+
 
 
 const routes = [
@@ -150,6 +152,15 @@ const routes = [
         <Calendar />
       </ProtectedRoute>
     ) 
+  },
+  { 
+    path: '/myprofile', 
+    name: 'myProfile', 
+    element: () => (
+      <ProtectedRoute  requiredPermission="view_profile" >
+        <MyProfile />
+      </ProtectedRoute>
+    )
   },
   { path: '/unauthorized', name: 'Unauthorized', element: () => <Unauthorized /> },
 
