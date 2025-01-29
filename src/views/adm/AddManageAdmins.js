@@ -181,7 +181,7 @@ const AddManageAdmins = () => {
           <CForm>
             <CRow className="mb-3">
               <CCol md="6">
-                <label htmlFor="username" className="form-label">Username</label>
+                <label htmlFor="username" className="form-label">Usernameee</label>
                 <input
                   type="text"
                   name="username"
