@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import {
   CButton,
   CCard,
@@ -15,37 +15,29 @@ import {
 } from '@coreui/react';
 
 const ResetPassword = () => {
-  const [email, setEmail] = useState(''); // Captura del email
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
 
     try {
-      // Solicitar todos los admins desde el servidor
-      const response = await axios.get('http://localhost:3001/admins');
-      const admins = response.data;
+      const response = await axios.post('http://localhost:5000/api/auth/reset-password', {
+        email,
+        code,
+        newPassword,
+      });
 
-      // Buscar al usuario que coincide con el email ingresado
-      const user = admins.find((admin) => admin.email === email);
-
-      if (user) {
-        // Actualizar la contraseña del usuario
-        const updatedUser = { ...user, password };
-
-        // Enviar la solicitud PUT para actualizar el usuario
-        await axios.put(`http://localhost:3001/admins/${user.id}`, updatedUser);
-
-        alert('Password has been reset successfully');
-        navigate('/login');
-      } else {
-        setErrorMessage('No user found with this email');
-      }
+      setMessage(response.data.message);
+      setError('');
+      setTimeout(() => navigate('/login'), 2000);
     } catch (error) {
-      console.error('Error resetting password:', error);
-      setErrorMessage('Something went wrong. Please try again.');
+      setError(error.response?.data?.message || 'Error resetting password');
+      setMessage('');
     }
   };
 
@@ -59,11 +51,11 @@ const ResetPassword = () => {
                 <CCardBody>
                   <CForm onSubmit={handleResetPassword}>
                     <h1>Reset Password</h1>
+                    <p>Enter the code sent to your email and set a new password.</p>
 
-                    {/* Mostrar mensaje de error si hay uno */}
-                    {errorMessage && <div className="text-danger mb-3">{errorMessage}</div>}
+                    {message && <div className="text-success mb-3">{message}</div>}
+                    {error && <div className="text-danger mb-3">{error}</div>}
 
-                    {/* Campo para el correo electrónico */}
                     <CInputGroup className="mb-3">
                       <CFormInput
                         type="email"
@@ -74,18 +66,26 @@ const ResetPassword = () => {
                       />
                     </CInputGroup>
 
-                    {/* Campo para la nueva contraseña */}
-                    <CInputGroup className="mb-4">
+                    <CInputGroup className="mb-3">
                       <CFormInput
-                        type="password"
-                        placeholder="New Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        type="text"
+                        placeholder="Enter reset code"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
                         required
                       />
                     </CInputGroup>
 
-                    {/* Botón de reset */}
+                    <CInputGroup className="mb-4">
+                      <CFormInput
+                        type="password"
+                        placeholder="New Password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        required
+                      />
+                    </CInputGroup>
+
                     <CButton color="primary" className="px-4" type="submit">
                       Reset Password
                     </CButton>

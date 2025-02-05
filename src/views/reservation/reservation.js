@@ -6,6 +6,8 @@ import { CIcon } from '@coreui/icons-react';
 import { cilPen, cilTrash } from '@coreui/icons';
 import axios from 'axios';
 import '../../css/styles.css';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Reservations = () => {
   const [reservations, setReservations] = useState([]);
@@ -57,6 +59,36 @@ const Reservations = () => {
 
   const handleCloseReservationForm = () => {
     setShowForm(false);
+  };
+  const exportToExcel = (reservations) => {
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(
+      reservations.map((reservation) => ({
+        "Reservation ID": reservation.id,
+        "Client ID": reservation.guests_id_guest,
+        "Reservation Date": new Date(reservation.date_reserve).toLocaleDateString(),
+        "Check-In Date": new Date(reservation.date_checkin).toLocaleDateString(),
+        "Check-Out Date": new Date(reservation.date_checkout).toLocaleDateString(),
+        "Number of Nights": reservation.number_nights,
+        "Rooms Assigned": reservation.rooms ? reservation.rooms.join(", ") : "No rooms assigned",
+      }))
+    );
+  
+    // Ajuste de estilos para las columnas
+    worksheet["!cols"] = [
+      { wch: 15 }, // Reservation ID
+      { wch: 10 }, // Client ID
+      { wch: 15 }, // Reservation Date
+      { wch: 15 }, // Check-In Date
+      { wch: 15 }, // Check-Out Date
+      { wch: 15 }, // Number of Nights
+      { wch: 25 }, // Rooms Assigned
+    ];
+  
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reservations");
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "Reservations.xlsx");
   };
 
   const addReservation = async (newReservation) => {
@@ -143,14 +175,21 @@ const Reservations = () => {
             value={guestIdFilter}
             onChange={handleGuestIdChange} // Manejar el cambio de filtro por ID de huésped
             placeholder="Filter by Guest ID"
-            className="form-control"
+            className="search-input "
           />
+        </div>
+
+        <div className="col-md-2">
+        <Button variant="success" onClick={() => exportToExcel(reservations)} className="mb-3">
+          Export to Excel
+        </Button>
         </div>
       </div>
 
-      <div className="table-responsive mt-3">
-        <div className="custom-table-container">
-          <Table className="custom-table">
+     
+        <div className="table-responsive hh mt-3">
+               
+          <Table striped bordered hover>
             <thead>
               <tr className="text-center">
                 <th>ID Reservation</th>
@@ -207,7 +246,7 @@ const Reservations = () => {
             </tbody>
           </Table>
         </div>
-      </div>
+      
 
       <ReservationForm
         show={showForm}

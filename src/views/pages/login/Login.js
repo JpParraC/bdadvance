@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode'; // Importa jwt-decode
+import jwt_decode from 'jwt-decode';
 import {
   CButton,
   CCard,
@@ -20,79 +20,104 @@ import { cilLockLocked, cilUser } from '@coreui/icons';
 import '../../../css/styles.css';
 
 const Login = () => {
-  const [staffId, setStaffId] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  // Establecer el tema de la página
   useEffect(() => {
     localStorage.setItem('theme', 'light');
     document.body.classList.remove('dark-theme');
     document.body.classList.add('light-theme');
   }, []);
 
-  // Función de login que se ejecuta al enviar el formulario
   const handleLogin = async (e) => {
     e.preventDefault();
-  
-    console.log('Formulario enviado');
-  
-    const staffIdInt = parseInt(staffId, 10); // Convierte el staff_id a entero
-  
-    if (isNaN(staffIdInt)) {
-      setErrorMessage('Staff ID debe ser un número válido');
+    console.log('Formulario enviado con:', { email, password });
+
+    if (!email) {
+      setErrorMessage('El email es obligatorio');
       return;
     }
-  
-    console.log('Datos enviados al backend:', { staffId: staffIdInt, password });
-  
+
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', {
-        staff_id: staffIdInt, // Enviar como número entero
+        email,
         password,
       });
-  
+
       console.log('Respuesta del backend:', response);
-  
+
       if (response.data && response.data.accessToken) {
-        const token = response.data.accessToken; // Acceder al token
+        const token = response.data.accessToken;
         localStorage.setItem('token', token);
         console.log('Token guardado en localStorage:', token);
-  
+
         // Decodificar el token JWT
         const decodedToken = jwt_decode(token);
-        console.log('Token decodificado:', decodedToken); 
-        console.log('Permisos del token decodificado:', decodedToken.permissions);
-  
-        const { id, role_id, permissions } = decodedToken;
-        console.log('Role ID:', role_id);
-        console.log('Permisos del usuario:', permissions);
-  
+        console.log('Token decodificado:', decodedToken);
+
+        const { 
+          user_id, 
+          staff_id, 
+          role_id, 
+          permissions, 
+          name, 
+          lastname, 
+          email, 
+          phone, 
+          gen, 
+          created_at, 
+          updated_at 
+        } = decodedToken;
+
+        if (!user_id || !staff_id || !role_id || !permissions || !name || !lastname || !email || !phone) {
+          setErrorMessage('Datos incompletos en el token');
+          return;
+        }
+
+        console.log('Datos del usuario:', {
+          user_id,
+          staff_id,
+          role_id,
+          permissions,
+          name,
+          lastname,
+          email,
+          phone,
+          gen,
+          created_at,
+          updated_at
+        });
+
         if (!permissions) {
           setErrorMessage('No se encontraron permisos en el token');
           return;
         }
-  
-        // Guardar el objeto completo en localStorage
-        const user = { id, staffId: staffIdInt, role_id, permissions };
-        localStorage.setItem('user', JSON.stringify(user));
-        console.log('Usuario guardado en localStorage:', user);
-  
-        // Verificación de permisos antes de redirigir
-        if (permissions) {
-          if (role_id === 1) {
-            navigate('/dashboard');
-          } else if (role_id === 2) {
-            navigate('/clients');
-          } else {
-            setErrorMessage('Rol desconocido. No se puede redirigir.');
-          }
+
+        localStorage.setItem('user', JSON.stringify({
+          user_id, 
+          staff_id, 
+          role_id, 
+          permissions, 
+          name, 
+          lastname, 
+          email, 
+          phone, 
+          gen, 
+          created_at, 
+          updated_at 
+        }));
+
+        if (role_id === 1) {
+          navigate('/dashboard');
+        } else if (role_id === 2) {
+          navigate('/clients');
         } else {
-          setErrorMessage('No tienes permisos suficientes para acceder a esta página.');
+          setErrorMessage('Rol desconocido. No se puede redirigir.');
         }
       } else {
-        setErrorMessage('ID de usuario o contraseña inválidos');
+        setErrorMessage('Email o contraseña inválidos');
       }
       window.location.reload();
     } catch (error) {
@@ -100,7 +125,7 @@ const Login = () => {
       setErrorMessage('Ocurrió un error, por favor intente nuevamente.');
     }
   };
-  
+
   return (
     <div className="login-background d-flex flex-row align-items-center">
       <CContainer>
@@ -122,10 +147,11 @@ const Login = () => {
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Staff ID"
-                        autoComplete="staff-id"
-                        value={staffId}
-                        onChange={(e) => setStaffId(e.target.value)}
+                        type="email"
+                        placeholder="Email"
+                        autoComplete="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                     </CInputGroup>
 

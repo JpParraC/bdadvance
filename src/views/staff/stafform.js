@@ -1,43 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-const StaffForm = ({ show, handleClose, staff, handleSave, roles }) => {
+const StaffForm = ({ show, handleClose, staff, handleSave }) => {
   // Initial state with default values
   const [formData, setFormData] = useState({
-    id: '',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    email: '',
+    id_staff: '',
+    name_staff: '',
+    lastname_staff: '',
+    email_staff: '',
     phone: '',
-    position: '',
-    department: '',
-    hireDate: '',
-    status: 'Active',
-    rol_staff_id: ''
+    gen: '', // Nuevo campo de género
+    rol_staffname: '',
   });
 
-  // UseEffect to populate form data if editing
+  const [roles, setRoles] = useState([]); // State to hold roles fetched from API
+
+  // Fetch roles from API when the form is shown
   useEffect(() => {
+    if (show) {
+      fetch('http://localhost:5000/api/roles/')
+        .then(response => response.json())
+        .then(data => setRoles(data)) // Save fetched roles in the state
+        .catch(error => console.error('Error fetching roles:', error));
+    }
+
     if (staff) {
-      setFormData(staff); // Fill the form with staff data if we are editing
-    } else {
-      // Clear the form if we are adding a new entry
+      // If editing a staff member, populate form data
       setFormData({
-        id: '',
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        email: '',
+        id_staff: staff.id_staff || '',
+        name_staff: staff.name_staff || '',
+        lastname_staff: staff.lastname_staff || '',
+        email_staff: staff.email_staff || '',
+        phone: staff.phone || '',
+        gen: staff.gen || '', // Nuevo campo de género
+        rol_staffname: staff.rol_staffname || '',
+      });
+    } else {
+      // Clear the form if adding new entry
+      setFormData({
+        id_staff: '',
+        name_staff: '',
+        lastname_staff: '',
+        email_staff: '',
         phone: '',
-        position: '',
-        department: '',
-        hireDate: '',
-        status: 'Active',
-        rol_staff_id: ''
+        gen: '', // Nuevo campo de género vacío por defecto
+        rol_staffname: '',
       });
     }
-  }, [staff]);
+  }, [staff, show]); // Trigger re-fetch on form visibility
 
   // Handle form field changes
   const handleChange = (e) => {
@@ -48,7 +58,7 @@ const StaffForm = ({ show, handleClose, staff, handleSave, roles }) => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleSave(formData); // Save data
+    handleSave(formData); // Pass the form data to handleSave method
   };
 
   return (
@@ -63,11 +73,11 @@ const StaffForm = ({ show, handleClose, staff, handleSave, roles }) => {
             <Form.Label>ID</Form.Label>
             <Form.Control
               type="text"
-              name="id"
-              value={formData.id}
+              name="id_staff"
+              value={formData.id_staff}
               onChange={handleChange}
               placeholder="ID"
-              disabled // ID is not editable
+              disabled // ID is not editable when updating
             />
           </Form.Group>
 
@@ -75,22 +85,11 @@ const StaffForm = ({ show, handleClose, staff, handleSave, roles }) => {
             <Form.Label>First Name</Form.Label>
             <Form.Control
               type="text"
-              name="firstName"
-              value={formData.firstName}
+              name="name_staff"
+              value={formData.name_staff}
               onChange={handleChange}
               placeholder="First Name"
               required
-            />
-          </Form.Group>
-
-          <Form.Group controlId="formMiddleName">
-            <Form.Label>Middle Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="middleName"
-              value={formData.middleName}
-              onChange={handleChange}
-              placeholder="Middle Name"
             />
           </Form.Group>
 
@@ -98,8 +97,8 @@ const StaffForm = ({ show, handleClose, staff, handleSave, roles }) => {
             <Form.Label>Last Name</Form.Label>
             <Form.Control
               type="text"
-              name="lastName"
-              value={formData.lastName}
+              name="lastname_staff"
+              value={formData.lastname_staff}
               onChange={handleChange}
               placeholder="Last Name"
               required
@@ -110,8 +109,8 @@ const StaffForm = ({ show, handleClose, staff, handleSave, roles }) => {
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
-              name="email"
-              value={formData.email}
+              name="email_staff"
+              value={formData.email_staff}
               onChange={handleChange}
               placeholder="Email"
               required
@@ -129,31 +128,40 @@ const StaffForm = ({ show, handleClose, staff, handleSave, roles }) => {
             />
           </Form.Group>
 
+          {/* Nuevo campo para el género */}
+          <Form.Group controlId="formGen">
+            <Form.Label>Gender</Form.Label>
+            <Form.Control
+              as="select"
+              name="gen"
+              value={formData.gen}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Gender</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </Form.Control>
+          </Form.Group>
+
           <Form.Group controlId="formRole">
             <Form.Label>Role</Form.Label>
             <Form.Control
               as="select"
-              name="rol_staff_id"
-              value={formData.rol_staff_id}
+              name="rol_staffname"
+              value={formData.rol_staffname}
               onChange={handleChange}
             >
               <option value="">Select Role</option>
-              {roles.map((role) => (
-                <option key={role.id} value={role.id}>{role.role}</option>
-              ))}
-            </Form.Control>
-          </Form.Group>
-
-          <Form.Group controlId="formStatus">
-            <Form.Label>Status</Form.Label>
-            <Form.Control
-              as="select"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-            >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              {roles.length > 0 ? (
+                roles.map((role) => (
+                  <option key={role.id} value={role.rol_name}>
+                    {role.rol_name}
+                  </option>
+                ))
+              ) : (
+                <option>Loading roles...</option>
+              )}
             </Form.Control>
           </Form.Group>
 

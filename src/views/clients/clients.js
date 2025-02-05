@@ -6,6 +6,7 @@ import { CIcon } from '@coreui/icons-react';
 import { cilPen, cilTrash, cilCalendar } from '@coreui/icons';
 import axios from 'axios';
 import '../../css/styles.css';
+import * as XLSX from 'xlsx'; 
 
 const Clients = () => {
   const [clients, setClients] = useState([]);
@@ -57,6 +58,15 @@ const Clients = () => {
       console.error("Error loading reservations:", error);
       alert("An error occurred while fetching reservations.");
     }
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(clients);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Clients");
+    
+    // Guardar el archivo
+    XLSX.writeFile(workbook, "Clients_List.xlsx");
   };
 
   const filteredClients = clients.filter(client =>
@@ -176,10 +186,13 @@ const Clients = () => {
         max="999999"
         step="1"
       />
+      <Button variant="success" onClick={exportToExcel} style={{ marginLeft: '10px' }}>
+        Export to Excel
+      </Button>
 
       <div className="table-responsive hh mt-3">
-        <div className="custom-table-container">
-          <Table className="custom-table">
+       
+          <Table striped bordered hover>
             <thead>
               <tr className='text-center'>
                 <th>ID</th>
@@ -223,7 +236,7 @@ const Clients = () => {
               ))}
             </tbody>
           </Table>
-        </div>
+        
       </div>
 
       {showForm && (

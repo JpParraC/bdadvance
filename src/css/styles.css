@@ -104,68 +104,44 @@ text-transform: uppercase;
 .room-container {
 margin-top: 30px;
 }
-/* Estilo general para las tablas */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: auto; /* Usar table-layout auto para permitir que el contenido se ajuste según el tamaño */
-  margin: 0 auto;
-   /* Centra la tabla */
-}
+
 
 /* Estilo para las celdas de contenido */
 table td {
   background-color: #ffffff;
   color: rgb(0, 13, 75);
   word-wrap: break-word; /* Permite que las palabras largas se rompan */
-}
+} 
 
-/* Estilo para las filas alternas (para mejorar la legibilidad) */
-table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
+
 
 
 
 /* Estilo para el contenedor de la tabla con scroll */
 .table-responsive {
-
+  height: 500px;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: #022853 #d4e6ff !important;
+  scrollbar-color: #a1cbfa #f1f4f8 !important;
 }
+
+.table-responsive th {
+  background-color: #c0ddff;
+  color: #030056;
+}
+
+
 /* Estilo para la tabla personalizada */
 .custom-table {
   width: 100%;
   overflow-x: auto;
- 
 }
-
-/* Estilo para las cabeceras y celdas de la tabla personalizada */
-.custom-table th, .custom-table td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #02285365; /* Línea divisoria debajo de las celdas */
-}
-
-.custom-table th {
-  background-color: #b4d3ff; /* Fondo de los encabezados */
-  color: rgb(0, 13, 75); /* Color de texto en los encabezados */
-}
-
-/* Eliminar la línea divisoria de la última fila */
-.custom-table tr:last-child td, 
-.custom-table tr:last-child th {
-  border-bottom: none;
-}
-
-/* Estilo para el buscador */
 .search-input {
   margin-left: 10px;
   padding: 6px 40px !important;
   border-radius: 5px;
   border: none;
-  background-color: #022853;
+  background-color: #6fb2ff;
   color: #333;
   font-size: 1rem;
   width: 200px;
@@ -173,13 +149,13 @@ table tr:nth-child(even) {
 }
 
 .search-input:focus {
-  background-color: #b4d3ff;
-  color: black;
+  background-color: #091629;
+  color: rgb(255, 255, 255);
   outline: none;
 }
 
 .search-input::placeholder {
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .search-input::-webkit-outer-spin-button,
@@ -190,15 +166,16 @@ table tr:nth-child(even) {
 
 /* Estilo para los botones personalizados */
 .button-blue {
-  background-color: #022853;
+  color: black;
+  background-color:#6fb2ff;
   padding: 6px 40px !important;
   margin-top: -4px;
   border: none;
 }
 
 .button-blue:hover {
-  background-color: #b4d3ff;
-  color: #022853;
+  background-color:  #000b2b;
+  color: #9ecbff;
 }
 
 .bl {
@@ -280,4 +257,64 @@ table tr:nth-child(even) {
 
 .custom-popover td {
   background-color: #fff; /* Fondo blanco para las celdas */
+}
+
+.profile-card {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.profile-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #ddd;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-select {
+  width: 80%;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.profile-info {
+  width: 100%;
+  text-align: left;
+}
+
+.profile-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #daf1f9;
+}
+
+.buttonnn{
+  margin-top: 50px;
 }

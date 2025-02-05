@@ -1,8 +1,6 @@
-// src/views/pages/forgotPassword/ForgotPassword.js
-
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate de react-router-dom
 import {
   CButton,
   CCard,
@@ -13,86 +11,61 @@ import {
   CForm,
   CFormInput,
   CInputGroup,
-  CInputGroupText,
   CRow,
 } from '@coreui/react';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // Hook para navegar a otras rutas
 
-  const handleForgotPassword = async (e) => {
+  const handleRequestReset = async (e) => {
     e.preventDefault();
 
     try {
-      // Hacer una solicitud para obtener admins
-      const response = await axios.get('http://localhost:3001/admins');
-      const admins = response.data;
+      const response = await axios.post('http://localhost:5000/api/auth/request-reset', { email });
+      setMessage(response.data.message);
+      setError('');
 
-      // Verificar si el email existe
-      const user = admins.find((admin) => admin.email === email);
-
-      if (user) {
-        // Enviar mensaje de restablecimiento de contraseña
-        setMessage(`please wait a moment ${email}. `);
-        
-  
-        setTimeout(() => {
-          navigate('/reset-password');
-        }, 3000);
-      } else {
-        setMessage('Email not found');
+      // Redirigir automáticamente a la página de restablecimiento de contraseña
+      if (response.data.message) {
+        navigate('/reset-password'); // Redirige a la página de reset-password después de que se haya enviado el código
       }
     } catch (error) {
-      console.error('Forgot Password error:', error);
-      setMessage('Something went wrong. Please try again.');
+      setError(error.response?.data?.message || 'Error sending reset request');
+      setMessage('');
     }
   };
 
   return (
-    <div className="forgot-password d-flex flex-row align-items-center">
+    <div className="reset-password d-flex flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
           <CCol md={4}>
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <CForm onSubmit={handleForgotPassword}>
-                    <h1>Forgot Password</h1>
-                    <p className="text-body-secondary">
-                      Enter your email to reset your password
-                    </p>
+                  <CForm onSubmit={handleRequestReset}>
+                    <h1>Reset Password</h1>
+                    <p>Enter your email to receive a reset code.</p>
 
-                    {message && (
-                      <div className="text-success mb-3">{message}</div>
-                    )}
+                    {message && <div className="text-success mb-3">{message}</div>}
+                    {error && <div className="text-danger mb-3">{error}</div>}
 
                     <CInputGroup className="mb-3">
-                      <CInputGroupText>@</CInputGroupText>
                       <CFormInput
                         type="email"
-                        placeholder="Email"
-                        autoComplete="email"
+                        placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                       />
                     </CInputGroup>
 
-                    <CRow>
-                      <CCol xs={6}>
-                        <CButton color="primary" className="px-4" type="submit">
-                          Submit
-                        </CButton>
-                      </CCol>
-                      <CCol xs={6} className="text-right">
-                        <Link to="/login">
-                          <CButton color="link" className="px-0">
-                            Back to Login
-                          </CButton>
-                        </Link>
-                      </CCol>
-                    </CRow>
+                    <CButton color="primary" className="px-4" type="submit">
+                      Send Reset Code
+                    </CButton>
                   </CForm>
                 </CCardBody>
               </CCard>
