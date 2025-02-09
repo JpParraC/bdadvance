@@ -1,276 +1,112 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { CIcon } from '@coreui/icons-react';
-import { cilCheck, cilX, cilSettings, cilPen } from '@coreui/icons';
-import { Modal, Button, Form } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Carousel, Card, Button } from "react-bootstrap";
+import { Star } from "lucide-react";
 
-const Rooms = () => {
-  const [rooms, setRooms] = useState([]);
-  const [roomTypes, setRoomTypes] = useState([]);
-  const [equipment, setEquipment] = useState([]);
-  const [roomTypeFilter, setRoomTypeFilter] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [currentRoom, setCurrentRoom] = useState(null);
+const sampleRooms = [
+  {
+    id: 1,
+    title: "Luxury Suite with Ocean View",
+    description: "A spacious luxury suite with stunning ocean views and premium amenities.",
+    price: "$250/night",
+    rating: 4.8,
+    images: [
+      "/src/assets/images/pent1.webp",
+      "/src/assets/images/pent2.webp",
+      "/src/assets/images/pent3.webp",
+      "/src/assets/images/pent4.webp",
+      "/src/assets/images/pent5.webp"
+    ]
+  },
+  {
+    id: 2,
+    title: "Cozy Cabin in the Mountains",
+    description: "A warm and inviting cabin with a fireplace and beautiful mountain scenery.",
+    price: "$180/night",
+    rating: 4.6,
+    images: [
+      "/src/assets/images/suite1.webp",
+      "/src/assets/images/suite2.webp",
+      "/src/assets/images/siote3.webp",
+      "/src/assets/images/suite4.webp",
+      "/src/assets/images/suite5.webp",
+    ]
+  },
+  {
+    id: 3,
+    title: "Modern Apartment in the City",
+    description: "A stylish modern apartment located in the heart of the city with great amenities.",
+    price: "$200/night",
+    rating: 4.7,
+    images: [
+      "/src/assets/images/single1.webp",
+      "/src/assets/images/single 3.webp",
+      "/src/assets/images/single 5.webp",
+    ]
+  },
+  {
+    id: 4,
+    title: "Rustic Farmhouse Retreat",
+    description: "A charming farmhouse retreat with nature surroundings and rustic interiors.",
+    price: "$150/night",
+    rating: 4.5,
+    images: [
+      "/src/assets/images/executive1.webp",
+      "/src/assets/images/executive2.webp",
+      "/src/assets/images/executive3.webp",
+      "/src/assets/images/executive4.webp",
+      "/src/assets/images/executive5.webp",
 
-  const fetchRooms = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/rooms');
-      setRooms(response.data);
-    } catch (error) {
-      console.error("Error loading rooms:", error);
-    }
-  };
+    ]
+  },
+  {
+    id: 5,
+    title: "Beachfront Bungalow",
+    description: "A cozy beachfront bungalow perfect for a relaxing getaway.",
+    price: "$220/night",
+    rating: 4.9,
+    images: [
+      "/src/assets/images/twin1.avif",
+      "/src/assets/images/twin2.avif",
+      "/src/assets/images/twin3.avif",
+      "/src/assets/images/twin5.avif",
+    ]
+  }
+];
 
-  const fetchRoomTypes = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/room_types');
-      setRoomTypes(response.data);
-    } catch (error) {
-      console.error("Error loading room types:", error);
-    }
-  };
-
-  const fetchEquipment = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/room_equipment');
-      setEquipment(response.data);
-    } catch (error) {
-      console.error("Error loading equipment:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchRooms();
-    fetchRoomTypes();
-    fetchEquipment();
-  }, []);
-
-  const filteredRooms = rooms.filter(room =>
-    room.id && room.id.toLowerCase().includes(roomTypeFilter.toLowerCase())
-  );
-
-  const handleRoomTypeFilterChange = (event) => {
-    setRoomTypeFilter(event.target.value);
-  };
-
-  const getPriceByTypeId = (typeId) => {
-    const roomType = roomTypes.find(type => type.id === typeId);
-    return roomType ? roomType.price : 'N/A';
-  };
-
-  const getEquipmentNames = (equipmentIds) => {
-    return equipmentIds.map(id => {
-      const equip = equipment.find(e => e.id === id);
-      return equip ? equip.name : 'Unknown';
-    }).join(', ');
-  };
-
-  const handleStatusChange = (roomId, newStatus) => {
-    setRooms(rooms.map(room =>
-      room.id === roomId ? { ...room, status: newStatus } : room
-    ));
-  };
-
-  const handleEditRoom = (room) => {
-    setCurrentRoom(room);
-    setShowModal(true);
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-    setCurrentRoom(null);
-  };
-
-  const handleModalSave = () => {
-    if (currentRoom) {
-      setRooms(rooms.map(room =>
-        room.id === currentRoom.id ? currentRoom : room
-      ));
-    }
-    handleModalClose();
-  };
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setCurrentRoom(prev => ({ ...prev, [name]: value }));
-  };
-
+const RoomGallery = () => {
   return (
-    <div className="container mt-5">
-      <h1 className="text-start">Rooms</h1>
-      <input 
-        type="text" 
-        className="form-control mb-3" 
-        placeholder="Filter by room type" 
-        value={roomTypeFilter} 
-        onChange={handleRoomTypeFilterChange} 
-      />
-
-      <table className="table table-bordered">
-        <thead className="thead-light text-center bg-light" style={{ backgroundColor: '#b4d3ff' }}>
-          <tr>
-            <th>ID</th>
-            <th>Type</th>
-            <th>Price</th>
-            <th>Status</th>
-            <th>Equipment</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRooms.map(room => (
-            <tr className="text-center" key={room.id}>
-              <td>{room.id}</td>
-              <td>{room.typeId || 'N/A'}</td>
-              <td>{getPriceByTypeId(room.typeId) || 'N/A'}</td>
-              <td>{room.status || 'N/A'}</td>
-              <td>{getEquipmentNames(room.equipment) || 'N/A'}</td>
-              <td className="text-center">
-                <button className="btn btn-link" onClick={() => handleEditRoom(room)}>
-                  <CIcon icon={cilPen} size="lg" />
-                </button>
-                <button 
-                  className="btn btn-link text-success" 
-                  onClick={() => handleStatusChange(room.id, 'occupied')}
-                  disabled={room.status === 'occupied'}
-                >
-                  <CIcon icon={cilCheck} size="lg" />
-                </button>
-                <button 
-                  className="btn btn-link text-danger" 
-                  onClick={() => handleStatusChange(room.id, 'available')}
-                  disabled={room.status === 'available'}
-                >
-                  <CIcon icon={cilX} size="lg" />
-                </button>
-                <button 
-                  className="btn btn-link text-purple" 
-                  onClick={() => handleStatusChange(room.id, 'maintenance')}
-                  disabled={room.status === 'maintenance'}
-                >
-                  <CIcon icon={cilSettings} size="lg" />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Flex container for both tables */}
-      <div className="d-flex justify-content-between mt-5">
-        {/* Section for Room Equipment */}
-        <div className="me-2" style={{ flex: 1, maxHeight: '400px', overflowY: 'auto' }}>
-          <h2>Room Equipment</h2>
-          <table className="table table-bordered">
-            <thead className="thead-light text-center" style={{ backgroundColor: '#b4d3ff' }}>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Available</th>
-              </tr>
-            </thead>
-            <tbody>
-              {equipment.map(item => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.name}</td>
-                  <td>{item.description}</td>
-                  <td>{item.available ? 'Yes' : 'No'}</td>
-                </tr>
+ 
+    <div className="container my-5">
+       <h1 className="mb-5 text-primary">Room Gallery</h1>
+      {sampleRooms.map((room) => (
+        <div key={room.id} className="row mb-5">
+          <div className="col-md-6">
+            <Carousel>
+              {room.images.map((img, index) => (
+                <Carousel.Item key={index}>
+                  <img className="d-block w-100 rounded" src={img} alt={`Slide ${index + 1}`} />
+                </Carousel.Item>
               ))}
-            </tbody>
-          </table>
+            </Carousel>
+          </div>
+          <div className="col-md-6 d-flex flex-column justify-content-center">
+            <Card className="p-4 shadow-lg">
+              <Card.Body>
+                <h2 className="text-primary">{room.title}</h2>
+                <p className="text-muted">{room.description}</p>
+                <div className="d-flex align-items-center mb-3">
+                  <Star className="text-warning" />
+                  <span className="ms-2 fw-bold">{room.rating}</span>
+                </div>
+                <p className="fs-4 text-success">{room.price}</p>
+                <Button variant="primary" className="w-100">Book Now</Button>
+              </Card.Body>
+            </Card>
+          </div>
         </div>
-
-        {/* Section for Room Types */}
-        <div className="ms-2" style={{ flex: 1 }}>
-          <h2>Room Types</h2>
-          <table className="table table-bordered">
-            <thead className="thead-light text-center" style={{ backgroundColor: '#b4d3ff' }}>
-              <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>Capacity</th>
-                <th>Price</th>
-                <th>Size</th>
-                <th>Floor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {roomTypes.map(type => (
-                <tr key={type.id}>
-                  <td>{type.id}</td>
-                  <td>{type.type}</td>
-                  <td>{type.capacity}</td>
-                  <td>{type.price}</td>
-                  <td>{type.size}</td>
-                  <td>{type.hotel_floor}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Edit Room Modal */}
-      <Modal show={showModal} onHide={handleModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Room</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {currentRoom && (
-            <Form>
-              <Form.Group className="mb-3">
-                <Form.Label>ID</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="id"
-                  value={currentRoom.id}
-                  readOnly
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Type ID</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="typeId"
-                  value={currentRoom.typeId}
-                  onChange={handleInputChange}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Status</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="status"
-                  value={currentRoom.status}
-                  onChange={handleInputChange}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Equipment</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="equipment"
-                  value={currentRoom.equipment.join(', ')}
-                  onChange={handleInputChange}
-                />
-              </Form.Group>
-            </Form>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleModalSave}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      ))}
     </div>
   );
 };
 
-export default Rooms;
+export default RoomGallery;

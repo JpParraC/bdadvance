@@ -21,8 +21,13 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
 
   const formatDate = (date) => {
     const d = new Date(date);
-    return d.toISOString().split('T')[0]; // Devuelve solo la parte de la fecha (yyyy-MM-dd)
+    if (isNaN(d.getTime())) {
+      console.error('Invalid date value:', date);
+      return ''; // Return an empty string or some placeholder
+    }
+    return d.toISOString().split('T')[0]; // Returns the date part in 'yyyy-MM-dd' format
   };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,7 +46,6 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
 
     fetchData();
   }, []);
-
   useEffect(() => {
     if (!show) {
       setFormData({
@@ -49,27 +53,31 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
         dateCheckin: '',
         dateCheckout: '',
         numberNights: '',
-        guests_id_guest: '',
       });
       setRoomBlocks([{ roomType: '', roomAssigned: '' }]);
       setAssignedRooms([]);
     } else if (reservation) {
+      const { date_reserve, date_checkin, date_checkout, number_nights, guests_id_guest, rooms } = reservation;
+  
       setFormData({
-        dateReserve: formatDate(reservation.date_reserve),
-        dateCheckin: formatDate(reservation.date_checkin),
-        dateCheckout: formatDate(reservation.date_checkout),
-        numberNights: reservation.number_nights,
-        guests_id_guest: reservation.guests_id_guest, 
+        dateReserve: date_reserve ? formatDate(date_reserve) : '',
+        dateCheckin: date_checkin ? formatDate(date_checkin) : '',
+        dateCheckout: date_checkout ? formatDate(date_checkout) : '',
+        numberNights: number_nights || '',
+        guests_id_guest: guests_id_guest || '',
       });
+  
       setRoomBlocks(
-        reservation.rooms.map(room => ({
+        rooms?.map(room => ({
           roomType: room.roomTypeId,
           roomAssigned: room.id,
         })) || [{ roomType: '', roomAssigned: '' }]
       );
-      setAssignedRooms(reservation.rooms.map(room => room.id));
+  
+      setAssignedRooms(rooms?.map(room => room.id) || []);
     }
   }, [show, reservation]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -292,7 +300,8 @@ const ReservationForm = ({ show, handleClose, addReservation, updateReservation,
                     <option value="">Select Room Type</option>
                     {roomTypes.map((type) => (
                       <option key={type.id} value={type.id}>
-                        {type.name}
+                        
+                        {type.id}
                       </option>
                     ))}
                   </select>

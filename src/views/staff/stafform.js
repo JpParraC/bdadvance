@@ -14,14 +14,24 @@ const StaffForm = ({ show, handleClose, staff, handleSave }) => {
   });
 
   const [roles, setRoles] = useState([]); // State to hold roles fetched from API
+  const [isLoading, setIsLoading] = useState(true); // State to track if roles are loading
+  const [error, setError] = useState(null); // State to handle potential API errors
 
   // Fetch roles from API when the form is shown
   useEffect(() => {
     if (show) {
+      setIsLoading(true);
       fetch('http://localhost:5000/api/roles/')
         .then(response => response.json())
-        .then(data => setRoles(data)) // Save fetched roles in the state
-        .catch(error => console.error('Error fetching roles:', error));
+        .then(data => {
+          setRoles(data);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching roles:', error);
+          setError('Failed to load roles.');
+          setIsLoading(false);
+        });
     }
 
     if (staff) {
@@ -58,6 +68,16 @@ const StaffForm = ({ show, handleClose, staff, handleSave }) => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Log formData to check the values being submitted
+    console.log('Form data being submitted:', formData);
+
+    // Check if gender is selected
+    if (!formData.gen) {
+      alert('Please select a gender');
+      return;
+    }
+
     handleSave(formData); // Pass the form data to handleSave method
   };
 
@@ -67,108 +87,114 @@ const StaffForm = ({ show, handleClose, staff, handleSave }) => {
         <Modal.Title>{staff ? 'Edit Staff' : 'Add Staff'}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          {/* ID Field, disabled */}
-          <Form.Group controlId="formId">
-            <Form.Label>ID</Form.Label>
-            <Form.Control
-              type="text"
-              name="id_staff"
-              value={formData.id_staff}
-              onChange={handleChange}
-              placeholder="ID"
-              disabled // ID is not editable when updating
-            />
-          </Form.Group>
+        {/* Handle loading state */}
+        {isLoading ? (
+          <p>Loading roles...</p>
+        ) : error ? (
+          <p style={{ color: 'red' }}>{error}</p>
+        ) : (
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="formId">
+              <Form.Label>ID</Form.Label>
+              <Form.Control
+                type="text"
+                name="id_staff"
+                value={formData.id_staff}
+                onChange={handleChange}
+                placeholder="ID"
+                disabled={staff !== null} // El campo se deshabilita solo cuando staff no es nulo (editando)
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formFirstName">
-            <Form.Label>First Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="name_staff"
-              value={formData.name_staff}
-              onChange={handleChange}
-              placeholder="First Name"
-              required
-            />
-          </Form.Group>
+            <Form.Group controlId="formFirstName">
+              <Form.Label>First Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="name_staff"
+                value={formData.name_staff}
+                onChange={handleChange}
+                placeholder="First Name"
+                required
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formLastName">
-            <Form.Label>Last Name</Form.Label>
-            <Form.Control
-              type="text"
-              name="lastname_staff"
-              value={formData.lastname_staff}
-              onChange={handleChange}
-              placeholder="Last Name"
-              required
-            />
-          </Form.Group>
+            <Form.Group controlId="formLastName">
+              <Form.Label>Last Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="lastname_staff"
+                value={formData.lastname_staff}
+                onChange={handleChange}
+                placeholder="Last Name"
+                required
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="email_staff"
-              value={formData.email_staff}
-              onChange={handleChange}
-              placeholder="Email"
-              required
-            />
-          </Form.Group>
+            <Form.Group controlId="formEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email_staff"
+                value={formData.email_staff}
+                onChange={handleChange}
+                placeholder="Email"
+                required
+              />
+            </Form.Group>
 
-          <Form.Group controlId="formPhone">
-            <Form.Label>Phone</Form.Label>
-            <Form.Control
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="Phone"
-            />
-          </Form.Group>
+            <Form.Group controlId="formPhone">
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Phone"
+              />
+            </Form.Group>
 
-          {/* Nuevo campo para el género */}
-          <Form.Group controlId="formGen">
-            <Form.Label>Gender</Form.Label>
-            <Form.Control
-              as="select"
-              name="gen"
-              value={formData.gen}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select Gender</option>
-              <option value="M">Male</option>
-              <option value="F">Female</option>
-            </Form.Control>
-          </Form.Group>
+            {/* Nuevo campo para el género */}
+            <Form.Group controlId="formGen">
+              <Form.Label>Gender</Form.Label>
+              <Form.Control
+                as="select"
+                name="gen"
+                value={formData.gen}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Gender</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </Form.Control>
+            </Form.Group>
 
-          <Form.Group controlId="formRole">
-            <Form.Label>Role</Form.Label>
-            <Form.Control
-              as="select"
-              name="rol_staffname"
-              value={formData.rol_staffname}
-              onChange={handleChange}
-            >
-              <option value="">Select Role</option>
-              {roles.length > 0 ? (
-                roles.map((role) => (
-                  <option key={role.id} value={role.rol_name}>
-                    {role.rol_name}
-                  </option>
-                ))
-              ) : (
-                <option>Loading roles...</option>
-              )}
-            </Form.Control>
-          </Form.Group>
+            <Form.Group controlId="formRole">
+              <Form.Label>Role</Form.Label>
+              <Form.Control
+                as="select"
+                name="rol_staffname"
+                value={formData.rol_staffname}
+                onChange={handleChange}
+              >
+                <option value="">Select Role</option>
+                {roles.length > 0 ? (
+                  roles.map((role) => (
+                    <option key={role.id} value={role.rol_name}>
+                      {role.rol_name}
+                    </option>
+                  ))
+                ) : (
+                  <option>Loading roles...</option>
+                )}
+              </Form.Control>
+            </Form.Group>
 
-          <Button variant="primary" type="submit">
-            {staff ? 'Update' : 'Add'}
-          </Button>
-        </Form>
+            <Button variant="primary" type="submit">
+              {staff ? 'Update' : 'Add'}
+            </Button>
+          </Form>
+        )}
       </Modal.Body>
     </Modal>
   );

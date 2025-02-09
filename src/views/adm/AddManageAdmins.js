@@ -10,11 +10,11 @@ import '../../css/styles.css';
 const AddManageAdmins = () => {
   const { user } = useAuth();
   const [admins, setAdmins] = useState([]);
-  const [idStaff, setIdStaff] = useState('');  // Cambié el nombre a idStaff
+  const [idStaff, setIdStaff] = useState('');
   const [staffExists, setStaffExists] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [newAdmin, setNewAdmin] = useState({ id_staff: '', role: 1 }); // Cambié el valor del rol a un número
-
+  const [newAdmin, setNewAdmin] = useState({ id_staff: '', role: 1 });
+  
   const [editAdmin, setEditAdmin] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -46,7 +46,7 @@ const AddManageAdmins = () => {
       if (response.ok) {
         const data = await response.json();
         setStaffExists(data);  
-        setNewAdmin({ id_staff: idStaff, role: 1 }); // Establecer el rol por defecto como 1
+        setNewAdmin({ id_staff: idStaff, role: 1 });
         setErrorMessage('');
       } else {
         setStaffExists(null);
@@ -61,19 +61,16 @@ const AddManageAdmins = () => {
   const handleAddAdmin = async () => {
     try {
       const staffResponse = await fetch(`http://localhost:5000/api/staff/${newAdmin.id_staff}`);
-
       if (staffResponse.ok) {
         const password = prompt("Ingrese una contraseña para el nuevo usuario:");
-
         if (!password) {
           alert("Debe ingresar una contraseña.");
           return;
         }
 
-        // Enviar el rol como número (parseInt asegura que el valor sea un número)
         const userPayload = {
           password: password,
-          role_id: newAdmin.role, // Se usa el número del rol
+          role_id: newAdmin.role,
           staff_id: newAdmin.id_staff,
         };
 
@@ -88,13 +85,66 @@ const AddManageAdmins = () => {
           setAdmins([...admins, data]);
           setAddModalVisible(false);
         } else {
-          console.error("Error al crear el usuario en users.");
+          console.error("Error al crear el usuario.");
         }
       } else {
         alert("El ID del staff no existe.");
       }
     } catch (error) {
       console.error("Error en la inserción:", error);
+    }
+  };
+
+  const handleEditAdmin = async (adminId) => {
+    try {
+      const adminToEdit = admins.find(admin => admin.staff_id === adminId);
+      if (adminToEdit) {
+        setEditAdmin(adminToEdit);
+        setEditModalVisible(true);
+      }
+    } catch (error) {
+      console.error("Error al editar el administrador:", error);
+    }
+  };
+
+  const handleUpdateAdmin = async () => {
+    try {
+      const updatedAdminPayload = {
+        role_id: editAdmin.role,
+      };
+
+      const response = await fetch(`http://localhost:5000/api/admins/${editAdmin.id_staff}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedAdminPayload),
+      });
+
+      if (response.ok) {
+        const updatedAdmin = await response.json();
+        setAdmins(admins.map(admin => admin.staff_id === updatedAdmin.staff_id ? updatedAdmin : admin));
+        setEditModalVisible(false);
+      } else {
+        console.error("Error al actualizar el administrador.");
+      }
+    } catch (error) {
+      console.error("Error al actualizar el administrador:", error);
+    }
+  };
+
+  const handleDeleteAdmin = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/admins/${adminToDelete.staff_id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setAdmins(admins.filter(admin => admin.staff_id !== adminToDelete.staff_id));
+        setDeleteModalVisible(false);
+      } else {
+        console.error("Error al eliminar el administrador.");
+      }
+    } catch (error) {
+      console.error("Error al eliminar el administrador:", error);
     }
   };
 
@@ -111,7 +161,6 @@ const AddManageAdmins = () => {
 
       <div className="table-responsive mt-3">
         <Table striped bordered hover>
-          
           <thead>
             <tr className="text-center">
               <th>ID</th>
@@ -135,7 +184,7 @@ const AddManageAdmins = () => {
                 <td>
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
                     {hasPermission(user, 'manage_admins') && (
-                      <button className="btn btn-link" onClick={() => handleEditAdmin(admin.id)} title="Edit">
+                      <button className="btn btn-link" onClick={() => handleEditAdmin(admin.staff_id)} title="Edit">
                         <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
                       </button>
                     )}
@@ -155,7 +204,7 @@ const AddManageAdmins = () => {
         </Table>
       </div>
 
-      {/* Modal para verificar ID de Staff */}
+      {/* Modal de Agregar Administrador */}
       <CModal visible={addModalVisible} onClose={() => setAddModalVisible(false)}>
         <CModalHeader>
           <CModalTitle>Verificar ID de Staff</CModalTitle>
@@ -176,7 +225,7 @@ const AddManageAdmins = () => {
         </CModalFooter>
       </CModal>
 
-      {/* Modal para asignar rol si el ID es válido */}
+      {/* Modal de Asignar Rol */}
       {staffExists && (
         <CModal visible={true} onClose={() => setStaffExists(null)}>
           <CModalHeader>
@@ -186,7 +235,7 @@ const AddManageAdmins = () => {
             <select
               className="form-control"
               value={newAdmin.role}
-              onChange={(e) => setNewAdmin({ ...newAdmin, role: parseInt(e.target.value) })} // Parsear a número
+              onChange={(e) => setNewAdmin({ ...newAdmin, role: parseInt(e.target.value) })}
             >
               <option value="1">Administrador</option>
               <option value="2">Recepcionista</option>
@@ -195,6 +244,45 @@ const AddManageAdmins = () => {
           <CModalFooter>
             <CButton color="secondary" onClick={() => setStaffExists(null)}>Cancelar</CButton>
             <CButton color="success" onClick={handleAddAdmin}>Guardar</CButton>
+          </CModalFooter>
+        </CModal>
+      )}
+
+      {/* Modal de Edición */}
+      {editAdmin && (
+        <CModal visible={editModalVisible} onClose={() => setEditModalVisible(false)}>
+          <CModalHeader>
+            <CModalTitle>Editar Administrador</CModalTitle>
+          </CModalHeader>
+          <CModalBody>
+            <select
+              className="form-control"
+              value={editAdmin.role}
+              onChange={(e) => setEditAdmin({ ...editAdmin, role: parseInt(e.target.value) })}
+            >
+              <option value="1">Administrador</option>
+              <option value="2">Recepcionista</option>
+            </select>
+          </CModalBody>
+          <CModalFooter>
+            <CButton color="secondary" onClick={() => setEditModalVisible(false)}>Cancelar</CButton>
+            <CButton color="success" onClick={handleUpdateAdmin}>Guardar</CButton>
+          </CModalFooter>
+        </CModal>
+      )}
+
+      {/* Modal de Eliminación */}
+      {adminToDelete && (
+        <CModal visible={deleteModalVisible} onClose={() => setDeleteModalVisible(false)}>
+          <CModalHeader>
+            <CModalTitle>Eliminar Administrador</CModalTitle>
+          </CModalHeader>
+          <CModalBody>
+            <p>¿Está seguro de que desea eliminar a este administrador?</p>
+          </CModalBody>
+          <CModalFooter>
+            <CButton color="secondary" onClick={() => setDeleteModalVisible(false)}>Cancelar</CButton>
+            <CButton color="danger" onClick={handleDeleteAdmin}>Eliminar</CButton>
           </CModalFooter>
         </CModal>
       )}
