@@ -225,15 +225,19 @@ const Reservations = () => {
                             <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
                           </Button>
 
-                          <Button
-                            variant="link"
-                            onClick={() => handleShowDeleteModal(reservation)}
-                            title="Delete"
-                          >
-                            <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
-                          </Button>
+                          {/* Verifica si el user_id es 1 en localStorage */}
+                          {localStorage.getItem('user_id') === '1' && (
+                            <Button
+                              variant="link"
+                              onClick={() => handleShowDeleteModal(reservation)}
+                              title="Delete"
+                            >
+                              <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
+                            </Button>
+                          )}
                         </div>
                       </td>
+
                     </tr>
                   ))
               ) : (

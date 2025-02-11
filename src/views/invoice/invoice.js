@@ -89,6 +89,7 @@ const Invoice = () => {
         show={showPaymentForm}
         handleClose={() => setShowPaymentForm(false)}
         selectedInvoice={selectedInvoice}
+        setPayments={setPayments}
       />
       <InvoiceDetailsModal
         show={invoiceDetailsModal}
@@ -123,7 +124,7 @@ const PaymentTable = ({ payments }) => (
             <td>{payment.mount}</td>
             <td>{payment.notes}</td>
             <td>{moment(payment.time).format('YYYY-MM-DD HH:mm:ss')}</td> {/* Formato de fecha */}
-            <td>{payment.paymentMethod}</td>
+            <td>{payment.id_payment_method}</td>
           </tr>
         ))}
       </tbody>
@@ -217,7 +218,7 @@ const InvoiceFormModal = ({ show, handleClose }) => {
   );
 };
 
-const PaymentFormModal = ({ show, handleClose, selectedInvoice }) => {
+const PaymentFormModal = ({ show, handleClose, selectedInvoice, setPayments }) => {
   const [formData, setFormData] = useState({
     mount: '',
     notes: '',
@@ -245,7 +246,10 @@ const PaymentFormModal = ({ show, handleClose, selectedInvoice }) => {
     try {
       const response = await axios.post('http://localhost:5000/api/payments/', paymentData);
       if (response.data) {
-        handleClose();
+        // Actualizar la lista de pagos en tiempo real
+        setPayments((prevPayments) => [...prevPayments, response.data]);
+
+        handleClose(); // Cierra el modal después de guardar el pago
       }
     } catch (error) {
       console.error('Error creating payment:', error);

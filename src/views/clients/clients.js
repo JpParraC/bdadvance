@@ -224,14 +224,20 @@ const Clients = () => {
                       <Button variant="link" onClick={() => { setEditClient(client); setShowForm(true); }} title="Edit">
                         <CIcon icon={cilPen} style={{ fontSize: '1.5rem', color: 'orange' }} />
                       </Button>
-                      <Button variant="link" onClick={() => { setDeleteClientId(client.id); setShowDeleteConfirmModal(true); }} title="Delete">
-                        <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
-                      </Button>
+                      
+                      {/* Verifica si el user_id es 1 en localStorage */}
+                      {localStorage.getItem('user_id') === '1' && (
+                        <Button variant="link" onClick={() => { setDeleteClientId(client.id); setShowDeleteConfirmModal(true); }} title="Delete">
+                          <CIcon icon={cilTrash} style={{ fontSize: '1.5rem', color: 'red' }} />
+                        </Button>
+                      )}
+                      
                       <Button variant="link" onClick={() => handleOpenReservationForm(client)} title="Add Reservation">
                         <CIcon icon={cilCalendar} style={{ fontSize: '1.5rem', color: 'green' }} />
                       </Button>
                     </div>
                   </td>
+
                 </tr>
               ))}
             </tbody>

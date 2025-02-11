@@ -173,42 +173,8 @@ const Dashboard = () => {
       </CRow>
 
       <CRow>
-        <CCol xs={12} md={6}>
-          <CCard className="mb-4">
-            <CCardHeader className="text-center"><h4>Task Progress</h4></CCardHeader>
-            <CCardBody>
-              <h6>Completed Tasks ({completedTasks})</h6>
-              <CProgress className="mb-3">
-                <CProgressBar value={completedPercentage} color="success">
-                  {completedPercentage}%
-                </CProgressBar>
-              </CProgress>
-
-              <h6>Pending Tasks ({pendingTasks})</h6>
-              <CProgress>
-                <CProgressBar value={pendingPercentage} color="warning">
-                  {pendingPercentage}%
-                </CProgressBar>
-              </CProgress>
-            </CCardBody>
-            <CCardFooter className="text-center">Total Tasks: {totalTasks}</CCardFooter>
-          </CCard>
-        </CCol>
-
-        <CCol xs={12} md={6}>
-          <CCard className="mb-4">
-            <CCardHeader className="text-center"><h4>Reservations by Date</h4></CCardHeader>
-            <CCardBody>
-              <Bar data={chartData} options={chartOptions} />
-            </CCardBody>
-            <CCardFooter className="text-center">Reservations per day for the month</CCardFooter>
-          </CCard>
-        </CCol>
-      </CRow>
-
-      {/* Audit Table */}
-      <CRow>
-        <CCol xs={12}>
+        
+      <CCol xs={12} md={6}>
           <CCard className="mb-4">
             <CCardHeader className="text-center bg-primary text-white"><h4>AUDIT LOG</h4></CCardHeader>
             <CCardBody>
@@ -251,7 +217,19 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
+
+        <CCol xs={12} md={6}>
+          <CCard className="mb-4">
+            <CCardHeader className="text-center"><h4>Reservations by Date</h4></CCardHeader>
+            <CCardBody>
+              <Bar data={chartData} options={chartOptions} />
+            </CCardBody>
+            <CCardFooter className="text-center">Reservations per day for the month</CCardFooter>
+          </CCard>
+        </CCol>
       </CRow>
+
+      
     </>
   )
 }
